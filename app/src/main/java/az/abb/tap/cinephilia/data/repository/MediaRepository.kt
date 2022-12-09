@@ -6,7 +6,7 @@ import retrofit2.Response
 
 class MediaRepository(private val apiService: ApiService) : MediaProvider {
 
-    override suspend fun provideMedia(): Response<TopRatedMoviesResponse> {
+    override suspend fun provideTopRatedMovies(): Response<TopRatedMoviesResponse> {
         return apiService.getTopRatedMovies()
     }
 }

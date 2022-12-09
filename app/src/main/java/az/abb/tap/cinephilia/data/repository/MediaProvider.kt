@@ -4,5 +4,5 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.TopRatedMovi
 import retrofit2.Response
 
 interface MediaProvider {
-    suspend fun provideMedia(): Response<TopRatedMoviesResponse>
+    suspend fun provideTopRatedMovies(): Response<TopRatedMoviesResponse>
 }
