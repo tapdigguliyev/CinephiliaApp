@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
+import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
 import az.abb.tap.cinephilia.utility.Resource
 import az.abb.tap.cinephilia.utility.toGenre
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,8 @@ class MainViewModel @Inject constructor(private val mediaRepository: MediaReposi
     val popularMovies: LiveData<Resource<MoviesResponse>> = _popularMovies
 
     var movieGenres: MutableList<Genre> = mutableListOf()
+
+    var movie: Movie? = null
 
     init {
         getTopRatedMovies()

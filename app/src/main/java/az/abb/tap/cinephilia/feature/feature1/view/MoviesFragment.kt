@@ -113,6 +113,7 @@ class MoviesFragment : Fragment() {
             glide.load(topRatedMovie.imageLink).into(view.ivMedia)
 
             view.root.setOnClickListener {
+                viewModel.movie = topRatedMovie
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }
         }
@@ -132,6 +133,7 @@ class MoviesFragment : Fragment() {
             glide.load(popularMovie.imageLink).into(view.ivMedia)
 
             view.root.setOnClickListener {
+                viewModel.movie = popularMovie
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }
         }
