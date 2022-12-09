@@ -14,7 +14,7 @@
 
         <ImageView
             android:id="@+id/ivMedia"
-            android:layout_width="@dimen/media_item_height"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:contentDescription="@string/media_image"

@@ -1,11 +1,17 @@
 package az.abb.tap.cinephilia.di
 
+import android.content.Context
+import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.data.network.tmdb.ApiService
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.Constants.BASE_URL
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -43,4 +49,15 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMediaRepository(apiService: ApiService) = MediaRepository(apiService)
+
+    @Provides
+    @Singleton
+    fun provideGlide(
+        @ApplicationContext context: Context
+    ) = Glide.with(context).setDefaultRequestOptions(
+        RequestOptions()
+            .placeholder(R.drawable.ic_baseline_file_download_24)
+            .error(R.drawable.ic_baseline_error_24)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+    )
 }
