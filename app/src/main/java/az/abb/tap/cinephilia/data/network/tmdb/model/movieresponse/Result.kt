@@ -1,4 +1,4 @@
-package az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies
+package az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse
 
 data class Result(
     val adult: Boolean,

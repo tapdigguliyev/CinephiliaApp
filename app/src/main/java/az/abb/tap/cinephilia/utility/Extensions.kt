@@ -2,14 +2,14 @@ package az.abb.tap.cinephilia.utility
 
 import android.view.View
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
-import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.Result
-import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.TopRatedMoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
-import az.abb.tap.cinephilia.feature.feature1.model.movies.MoviesResponse
+import az.abb.tap.cinephilia.feature.feature1.model.movies.Movies
 
-fun TopRatedMoviesResponse.toMoviesResponse() =
-    MoviesResponse(
+fun MoviesResponse.toMovies() =
+    Movies(
         page = page,
         movies = results.map { it.toMovie() },
         total_pages = total_pages,

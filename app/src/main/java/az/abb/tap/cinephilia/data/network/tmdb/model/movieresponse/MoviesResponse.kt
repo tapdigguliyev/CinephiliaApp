@@ -1,6 +1,6 @@
-package az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies
+package az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse
 
-data class TopRatedMoviesResponse(
+data class MoviesResponse(
     val page: Int,
     val results: List<Result>,
     val total_pages: Int,

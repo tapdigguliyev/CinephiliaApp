@@ -24,7 +24,7 @@ import javax.inject.Inject
 class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
     private val topRatedMoviesAdapter by lazy { BaseAdapter<Movie>() }
-    private val moviesAdapter by lazy { BaseAdapter<String>() }
+    private val moviesAdapter by lazy { BaseAdapter<Movie>() }
     private val viewModel: MainViewModel by activityViewModels()
 
     @Inject
@@ -51,7 +51,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.listOfItems = response.toMoviesResponse().movies.toMutableList()
+                        topRatedMoviesAdapter.listOfItems = response.toMovies().movies.toMutableList()
                     }
                 }
 
@@ -64,6 +64,28 @@ class MoviesFragment : Fragment() {
 
                 is Resource.Loading -> {
                     binding.pbTopRatedMovies.makeVisible()
+                }
+            }
+        }
+
+        viewModel.popularMovies.observe(viewLifecycleOwner) { responseResource ->
+            when(responseResource) {
+                is Resource.Success -> {
+                    binding.pbPopularMovies.makeInvisible()
+                    responseResource.data?.let { response ->
+                        moviesAdapter.listOfItems = response.toMovies().movies.toMutableList()
+                    }
+                }
+
+                is Resource.Error -> {
+                    binding.pbPopularMovies.makeInvisible()
+                    responseResource.message?.let { message ->
+                        Log.e(TAG, "An error occurred: $message")
+                    }
+                }
+
+                is Resource.Loading -> {
+                    binding.pbPopularMovies.makeVisible()
                 }
             }
         }
@@ -93,8 +115,14 @@ class MoviesFragment : Fragment() {
             ItemMediaBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         }
 
-        moviesAdapter.expressionOnBindViewHolder = { movie, viewBinding ->
+        moviesAdapter.expressionOnBindViewHolder = { popularMovie, viewBinding ->
             val view = viewBinding as ItemMediaBinding
+
+            view.tvMediaName.text = popularMovie.title
+            view.tvMediaYear.text = popularMovie.releaseDate
+            view.tvMediaGenre.text = popularMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
+            glide.load(popularMovie.imageLink).into(view.ivMedia)
+
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }

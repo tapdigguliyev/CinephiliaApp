@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.TopRatedMoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.utility.Resource
@@ -17,13 +17,17 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val mediaRepository: MediaRepository) : ViewModel() {
 
-    private val _topRatedMovies: MutableLiveData<Resource<TopRatedMoviesResponse>> = MutableLiveData()
-    val topRatedMovies: LiveData<Resource<TopRatedMoviesResponse>> = _topRatedMovies
+    private val _topRatedMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
+    val topRatedMovies: LiveData<Resource<MoviesResponse>> = _topRatedMovies
+
+    private val _popularMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
+    val popularMovies: LiveData<Resource<MoviesResponse>> = _popularMovies
 
     var movieGenres: MutableList<Genre> = mutableListOf()
 
     init {
         getTopRatedMovies()
+        getPopularMovies()
         getGenres()
     }
 
@@ -33,7 +37,13 @@ class MainViewModel @Inject constructor(private val mediaRepository: MediaReposi
         _topRatedMovies.postValue(handleMoviesResponse(response))
     }
 
-    private fun handleMoviesResponse(response: Response<TopRatedMoviesResponse>): Resource<TopRatedMoviesResponse> {
+    private fun getPopularMovies() = viewModelScope.launch {
+        _popularMovies.postValue(Resource.Loading())
+        val response = mediaRepository.providePopularMovies()
+        _popularMovies.postValue(handleMoviesResponse(response))
+    }
+
+    private fun handleMoviesResponse(response: Response<MoviesResponse>): Resource<MoviesResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
