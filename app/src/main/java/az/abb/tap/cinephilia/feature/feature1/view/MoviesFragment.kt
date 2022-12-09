@@ -13,11 +13,9 @@ import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.base.BaseAdapter
 import az.abb.tap.cinephilia.databinding.FragmentMoviesBinding
 import az.abb.tap.cinephilia.databinding.ItemMediaBinding
-import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
-import az.abb.tap.cinephilia.utility.Resource
-import az.abb.tap.cinephilia.utility.toMoviesResponse
+import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,7 +26,6 @@ class MoviesFragment : Fragment() {
     private val topRatedMoviesAdapter by lazy { BaseAdapter<Movie>() }
     private val moviesAdapter by lazy { BaseAdapter<String>() }
     private val viewModel: MainViewModel by activityViewModels()
-    private var movieGenres: MutableList<Genre> = mutableListOf()
 
     @Inject
     lateinit var glide: RequestManager
@@ -44,7 +41,6 @@ class MoviesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        movieGenres = viewModel.movieGenres
         setupTopRatedMoviesRecyclerView()
         setupMoviesRecyclerView()
         setupTopRatedMoviesAdapter()
@@ -53,32 +49,24 @@ class MoviesFragment : Fragment() {
         viewModel.topRatedMovies.observe(viewLifecycleOwner) { responseResource ->
             when(responseResource) {
                 is Resource.Success -> {
-                    hideProgressBar()
+                    binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
                         topRatedMoviesAdapter.listOfItems = response.toMoviesResponse().movies.toMutableList()
                     }
                 }
 
                 is Resource.Error -> {
-                    hideProgressBar()
+                    binding.pbTopRatedMovies.makeInvisible()
                     responseResource.message?.let { message ->
                         Log.e(TAG, "An error occurred: $message")
                     }
                 }
 
                 is Resource.Loading -> {
-                    showProgressBar()
+                    binding.pbTopRatedMovies.makeVisible()
                 }
             }
         }
-    }
-
-    private fun showProgressBar() {
-        binding.pbTopRatedMovies.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        binding.pbTopRatedMovies.visibility = View.INVISIBLE
     }
 
     private fun setupTopRatedMoviesAdapter() {
@@ -91,33 +79,13 @@ class MoviesFragment : Fragment() {
 
             view.tvMediaName.text = topRatedMovie.title
             view.tvMediaYear.text = topRatedMovie.releaseDate
-
-            val specificGenresNames = getSpecificGenresNames(topRatedMovie)
-            view.tvMediaGenre.text = getStringFromListOfStrings(specificGenresNames)
-
+            view.tvMediaGenre.text = topRatedMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             glide.load(topRatedMovie.imageLink).into(view.ivMedia)
 
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }
         }
-    }
-
-    private fun getStringFromListOfStrings(strings: List<String>): String {
-        val builder = StringBuilder()
-        strings.forEach { string ->
-            builder.append(string)
-            if (strings.last() != string) builder.append(", ")
-        }
-        return builder.toString()
-    }
-
-    private fun getSpecificGenresNames(topRatedMovie: Movie): List<String> {
-        val specificMovieGenres: MutableList<Genre> = mutableListOf()
-        topRatedMovie.genreIds.forEach { genreId ->
-            specificMovieGenres.addAll(movieGenres.filter { it.id == genreId })
-        }
-        return specificMovieGenres.map { it.name }
     }
 
     private fun setupMoviesAdapter() {

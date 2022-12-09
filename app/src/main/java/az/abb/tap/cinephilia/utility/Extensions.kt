@@ -1,5 +1,6 @@
 package az.abb.tap.cinephilia.utility
 
+import android.view.View
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
 import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.Result
 import az.abb.tap.cinephilia.data.network.tmdb.model.topratedmovies.TopRatedMoviesResponse
@@ -30,3 +31,28 @@ fun GenreInfo.toGenre() =
         id = id,
         name = name
     )
+
+fun List<String>.toStr(): String {
+    val builder = StringBuilder()
+    this.forEach { string ->
+        builder.append(string)
+        if (this.last() != string) builder.append(", ")
+    }
+    return builder.toString()
+}
+
+fun Movie.getListOfSpecificGenreNames(movieGenres: MutableList<Genre>): List<String> {
+    val specificMovieGenres: MutableList<Genre> = mutableListOf()
+    this.genreIds.forEach { genreId ->
+        specificMovieGenres.addAll(movieGenres.filter { it.id == genreId })
+    }
+    return specificMovieGenres.map { it.name }
+}
+
+fun View.makeVisible() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.makeInvisible() {
+    this.visibility = View.INVISIBLE
+}
