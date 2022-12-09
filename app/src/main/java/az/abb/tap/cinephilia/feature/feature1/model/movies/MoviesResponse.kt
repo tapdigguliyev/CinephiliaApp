@@ -1,4 +1,4 @@
-package az.abb.tap.cinephilia.feature.feature1.model
+package az.abb.tap.cinephilia.feature.feature1.model.movies
 
 data class MoviesResponse (
     val page: Int,
