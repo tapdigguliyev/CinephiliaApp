@@ -46,12 +46,18 @@ class MoviesFragment : Fragment() {
         setupTopRatedMoviesAdapter()
         setupMoviesAdapter()
 
+        observeTopRatedMovies()
+        observePopularMovies()
+    }
+
+    private fun observeTopRatedMovies() {
         viewModel.topRatedMovies.observe(viewLifecycleOwner) { responseResource ->
-            when(responseResource) {
+            when (responseResource) {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.listOfItems = response.toMovies().movies.toMutableList()
+                        topRatedMoviesAdapter.listOfItems =
+                            response.toMovies().movies.toMutableList()
                     }
                 }
 
@@ -67,9 +73,11 @@ class MoviesFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun observePopularMovies() {
         viewModel.popularMovies.observe(viewLifecycleOwner) { responseResource ->
-            when(responseResource) {
+            when (responseResource) {
                 is Resource.Success -> {
                     binding.pbPopularMovies.makeInvisible()
                     responseResource.data?.let { response ->
