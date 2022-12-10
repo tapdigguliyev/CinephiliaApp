@@ -143,6 +143,7 @@ class MoviesFragment : Fragment() {
         binding.rvMovies.apply {
             adapter = moviesAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            snapToChildView()
         }
     }
 
@@ -151,6 +152,7 @@ class MoviesFragment : Fragment() {
             adapter = topRatedMoviesAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            snapToChildView()
         }
     }
 }

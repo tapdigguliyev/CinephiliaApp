@@ -1,6 +1,8 @@
 package az.abb.tap.cinephilia.utility
 
 import android.view.View
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
@@ -55,4 +57,8 @@ fun View.makeVisible() {
 
 fun View.makeInvisible() {
     this.visibility = View.INVISIBLE
+}
+
+fun RecyclerView.snapToChildView() {
+    LinearSnapHelper().attachToRecyclerView(this)
 }
