@@ -12,10 +12,14 @@ import androidx.navigation.fragment.findNavController
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.databinding.FragmentMovieDetailsBinding
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
+import az.abb.tap.cinephilia.utility.assignColors
 import az.abb.tap.cinephilia.utility.getListOfSpecificGenreNames
 import az.abb.tap.cinephilia.utility.toStr
 import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,6 +54,19 @@ class MovieDetailsFragment : Fragment() {
             binding.tvMovieGenres.text = movie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             binding.tvMovieYear.text = movie.releaseDate
             binding.tvMovieDescription.text = movie.overview
+
+            CoroutineScope(Dispatchers.IO).launch {
+                binding.movieDetailsLayout.assignColors(
+                    requireContext(),
+                    movie.imageLink,
+                    glide,
+                    binding.tvMovieName,
+                    binding.tvMovieOriginalTitle,
+                    binding.tvMovieGenres,
+                    binding.tvMovieYear,
+                    binding.tvMovieDescription
+                )
+            }
         }
 
     }

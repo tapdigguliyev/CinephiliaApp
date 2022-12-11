@@ -1,14 +1,21 @@
 package az.abb.tap.cinephilia.utility
 
+import android.content.Context
+import android.graphics.Color
 import android.view.View
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
-import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
 import az.abb.tap.cinephilia.feature.feature1.model.movies.Movies
+import com.bumptech.glide.RequestManager
 
 fun MoviesResponse.toMovies() =
     Movies(
@@ -61,4 +68,40 @@ fun View.makeInvisible() {
 
 fun RecyclerView.snapToChildView() {
     LinearSnapHelper().attachToRecyclerView(this)
+}
+
+fun View.assignColors(context: Context, imageLink: String, glide: RequestManager, vararg textView: TextView) {
+    val bitmap = glide.asBitmap().load(imageLink).submit().get()
+
+    Palette.from(bitmap).generate {
+        it?.let {
+            val backgroundColor = it.getDominantColor(
+                ContextCompat.getColor(
+                    context,
+                    androidx.appcompat.R.color.background_material_dark
+                )
+            )
+
+            when(this) {
+                is CardView -> setCardBackgroundColor(backgroundColor)
+                else -> setBackgroundColor(backgroundColor)
+            }
+
+            textView.forEach { textView ->
+                textView.setTextColorAgainstBackgroundColor(backgroundColor)
+            }
+        }
+    }
+}
+
+fun TextView.setTextColorAgainstBackgroundColor(backgroundColor: Int) {
+    val textColor = if (backgroundColor.isDark()) Color.WHITE else Color.BLACK
+    this.setTextColor(textColor)
+}
+
+fun Int.isDark(): Boolean {
+    val darkness = 1 - (0.299 * Color.red(this) +
+            0.587 * Color.green(this) +
+            0.114 * Color.blue(this)) / 255
+    return darkness >= 0.5
 }

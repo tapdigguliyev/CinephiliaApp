@@ -18,6 +18,9 @@ import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
 import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -112,6 +115,17 @@ class MoviesFragment : Fragment() {
             view.tvMediaGenre.text = topRatedMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             glide.load(topRatedMovie.imageLink).into(view.ivMedia)
 
+            CoroutineScope(Dispatchers.IO).launch {
+                view.mediaItemCard.assignColors(
+                    requireContext(),
+                    topRatedMovie.imageLink,
+                    glide,
+                    view.tvMediaName,
+                    view.tvMediaYear,
+                    view.tvMediaGenre
+                )
+            }
+
             view.root.setOnClickListener {
                 viewModel.movie = topRatedMovie
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
@@ -131,6 +145,17 @@ class MoviesFragment : Fragment() {
             view.tvMediaYear.text = popularMovie.releaseDate
             view.tvMediaGenre.text = popularMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             glide.load(popularMovie.imageLink).into(view.ivMedia)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                view.mediaItemCard.assignColors(
+                    requireContext(),
+                    popularMovie.imageLink,
+                    glide,
+                    view.tvMediaName,
+                    view.tvMediaYear,
+                    view.tvMediaGenre
+                )
+            }
 
             view.root.setOnClickListener {
                 viewModel.movie = popularMovie
