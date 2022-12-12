@@ -60,8 +60,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.listOfItems =
-                            response.toMovies().movies.toMutableList()
+                        topRatedMoviesAdapter.differ.submitList(response.toMovies().movies.toMutableList())
                     }
                 }
 
@@ -85,7 +84,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbPopularMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        moviesAdapter.listOfItems = response.toMovies().movies.toMutableList()
+                        moviesAdapter.differ.submitList(response.toMovies().movies.toMutableList())
                     }
                 }
 
