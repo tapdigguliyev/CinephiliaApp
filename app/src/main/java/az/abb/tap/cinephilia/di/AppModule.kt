@@ -1,10 +1,12 @@
 package az.abb.tap.cinephilia.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.data.network.tmdb.ApiService
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.Constants.BASE_URL
+import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -60,4 +62,10 @@ object AppModule {
             .error(R.drawable.ic_baseline_error_24)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
+
+    @Provides
+    @Singleton
+    fun provideNetworkStatusChecker(
+        @ApplicationContext context: Context
+    ): NetworkStatusChecker = NetworkStatusChecker(context.getSystemService(ConnectivityManager::class.java))
 }
