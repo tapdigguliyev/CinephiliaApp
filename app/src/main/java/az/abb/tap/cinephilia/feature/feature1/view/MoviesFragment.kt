@@ -111,7 +111,7 @@ class MoviesFragment : Fragment() {
             val view = viewBinding as ItemMediaBinding
 
             view.tvMediaName.text = topRatedMovie.title
-            view.tvMediaYear.text = topRatedMovie.releaseDate
+            view.tvMediaYear.text = topRatedMovie.releaseDate.getYearFromDate()
             view.tvMediaGenre.text = topRatedMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             glide.load(topRatedMovie.imageLink).into(view.ivMedia)
 
@@ -142,7 +142,7 @@ class MoviesFragment : Fragment() {
             val view = viewBinding as ItemMediaBinding
 
             view.tvMediaName.text = popularMovie.title
-            view.tvMediaYear.text = popularMovie.releaseDate
+            view.tvMediaYear.text = popularMovie.releaseDate.getYearFromDate()
             view.tvMediaGenre.text = popularMovie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
             glide.load(popularMovie.imageLink).into(view.ivMedia)
 

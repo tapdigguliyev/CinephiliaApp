@@ -14,6 +14,7 @@ import az.abb.tap.cinephilia.databinding.FragmentMovieDetailsBinding
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
 import az.abb.tap.cinephilia.utility.assignColors
 import az.abb.tap.cinephilia.utility.getListOfSpecificGenreNames
+import az.abb.tap.cinephilia.utility.getYearFromDate
 import az.abb.tap.cinephilia.utility.toStr
 import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +53,7 @@ class MovieDetailsFragment : Fragment() {
             binding.tvMovieName.text = movie.title
             binding.tvMovieOriginalTitle.text = movie.originalTitle
             binding.tvMovieGenres.text = movie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
-            binding.tvMovieYear.text = movie.releaseDate
+            binding.tvMovieYear.text = movie.releaseDate.getYearFromDate()
             binding.tvMovieDescription.text = movie.overview
 
             CoroutineScope(Dispatchers.IO).launch {
