@@ -18,14 +18,21 @@
         android:id="@+id/seriesFragment"
         android:name="az.abb.tap.cinephilia.feature.feature1.view.SeriesFragment"
         android:label="fragment_series"
-        tools:layout="@layout/fragment_series" />
+        tools:layout="@layout/fragment_series" >
+        <action
+            android:id="@+id/action_seriesFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/movieDetailsFragment"
-        android:name="az.abb.tap.cinephilia.feature.feature1.view.MovieDetailsFragment"
+        android:name="az.abb.tap.cinephilia.feature.feature1.view.DetailsFragment"
         android:label="fragment_movie_details"
-        tools:layout="@layout/fragment_movie_details">
+        tools:layout="@layout/fragment_details">
         <action
             android:id="@+id/action_movieDetailsFragment_to_moviesFragment"
             app:destination="@id/moviesFragment" />
+        <action
+            android:id="@+id/action_movieDetailsFragment_to_seriesFragment"
+            app:destination="@id/seriesFragment" />
     </fragment>
 </navigation>

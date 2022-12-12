@@ -12,27 +12,47 @@ import androidx.recyclerview.widget.RecyclerView
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSeries
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
-import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
-import az.abb.tap.cinephilia.feature.feature1.model.movies.Movies
+import az.abb.tap.cinephilia.feature.feature1.model.media.Media
+import az.abb.tap.cinephilia.feature.feature1.model.media.Medias
 import com.bumptech.glide.RequestManager
 
-fun MoviesResponse.toMovies() =
-    Movies(
+fun MoviesResponse.toMedias() =
+    Medias(
         page = page,
-        movies = results.map { it.toMovie() },
+        movies = results.map { it.toMedia() },
         total_pages = total_pages,
         total_results = total_results
     )
 
-fun Result.toMovie() =
-    Movie(
+fun Result.toMedia() =
+    Media(
         title = title,
         originalTitle = original_title,
         genreIds = genre_ids,
         overview = overview,
         imageLink = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
         releaseDate = release_date
+    )
+
+fun SeriesResponse.toMedias() =
+    Medias(
+        page = page,
+        movies = results.map { it.toMedia() },
+        total_pages = total_pages,
+        total_results = total_results
+    )
+
+fun ResultSeries.toMedia() =
+    Media(
+        title = name,
+        originalTitle = original_name,
+        genreIds = genre_ids,
+        overview = overview,
+        imageLink = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
+        releaseDate = first_air_date
     )
 
 fun GenreInfo.toGenre() =
@@ -50,7 +70,7 @@ fun List<String>.toStr(): String {
     return builder.toString()
 }
 
-fun Movie.getListOfSpecificGenreNames(movieGenres: MutableList<Genre>): List<String> {
+fun Media.getListOfSpecificGenreNames(movieGenres: MutableList<Genre>): List<String> {
     val specificMovieGenres: MutableList<Genre> = mutableListOf()
     this.genreIds.forEach { genreId ->
         specificMovieGenres.addAll(movieGenres.filter { it.id == genreId })

@@ -3,6 +3,7 @@ package az.abb.tap.cinephilia.data.repository
 import az.abb.tap.cinephilia.data.network.tmdb.ApiService
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenresResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import retrofit2.Response
 
 class MediaRepository(private val apiService: ApiService) : MediaProvider {
@@ -19,7 +20,11 @@ class MediaRepository(private val apiService: ApiService) : MediaProvider {
         return apiService.getMovieGenres()
     }
 
-    override suspend fun provideTopRatedTVShows(): Response<MoviesResponse> {
+    override suspend fun provideTopRatedTVShows(): Response<SeriesResponse> {
         return apiService.getTopRatedTvShows()
+    }
+
+    override suspend fun providePopularTVShows(): Response<SeriesResponse> {
+        return apiService.getPopularTvShows()
     }
 }

@@ -1,6 +1,6 @@
-package az.abb.tap.cinephilia.feature.feature1.model.movies
+package az.abb.tap.cinephilia.feature.feature1.model.media
 
-data class Movie (
+data class Media (
     val title: String,
     val originalTitle: String,
     val genreIds: List<Int>,

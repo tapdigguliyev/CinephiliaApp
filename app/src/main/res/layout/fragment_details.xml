@@ -5,7 +5,7 @@
     android:id="@+id/movieDetailsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature.feature1.view.MovieDetailsFragment">
+    tools:context=".feature.feature1.view.DetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

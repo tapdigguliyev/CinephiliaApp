@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import az.abb.tap.cinephilia.R
-import az.abb.tap.cinephilia.databinding.FragmentMovieDetailsBinding
+import az.abb.tap.cinephilia.databinding.FragmentDetailsBinding
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
 import az.abb.tap.cinephilia.utility.assignColors
 import az.abb.tap.cinephilia.utility.getListOfSpecificGenreNames
@@ -24,15 +24,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MovieDetailsFragment : Fragment() {
-    private lateinit var binding: FragmentMovieDetailsBinding
+class DetailsFragment : Fragment() {
+    private lateinit var binding: FragmentDetailsBinding
     private val viewModel: MainViewModel by activityViewModels()
 
     @Inject
     lateinit var glide: RequestManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
+        binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,14 +41,14 @@ class MovieDetailsFragment : Fragment() {
         (activity as AppCompatActivity).apply {
             val toolbar = this.findViewById<Toolbar>(R.id.toolbar)
             setSupportActionBar(toolbar)
-            supportActionBar?.title = viewModel.movie?.title
+            supportActionBar?.title = viewModel.media?.title
 
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
         }
 
-        viewModel.movie?.let { movie ->
+        viewModel.media?.let { movie ->
             glide.load(movie.imageLink).into(binding.ivMovie)
             binding.tvMovieName.text = movie.title
             binding.tvMovieOriginalTitle.text = movie.originalTitle

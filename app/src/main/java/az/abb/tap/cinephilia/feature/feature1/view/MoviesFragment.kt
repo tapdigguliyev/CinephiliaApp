@@ -14,7 +14,7 @@ import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.base.BaseAdapter
 import az.abb.tap.cinephilia.databinding.FragmentMoviesBinding
 import az.abb.tap.cinephilia.databinding.ItemMediaBinding
-import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
+import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
 import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
@@ -27,8 +27,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
-    private val topRatedMoviesAdapter by lazy { BaseAdapter<Movie>() }
-    private val moviesAdapter by lazy { BaseAdapter<Movie>() }
+    private val topRatedMoviesAdapter by lazy { BaseAdapter<Media>() }
+    private val moviesAdapter by lazy { BaseAdapter<Media>() }
     private val viewModel: MainViewModel by activityViewModels()
 
     @Inject
@@ -60,7 +60,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.differ.submitList(response.toMovies().movies.toMutableList())
+                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -84,7 +84,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbPopularMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        moviesAdapter.differ.submitList(response.toMovies().movies.toMutableList())
+                        moviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -128,7 +128,7 @@ class MoviesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                viewModel.movie = topRatedMovie
+                viewModel.media = topRatedMovie
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }
         }
@@ -159,7 +159,7 @@ class MoviesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                viewModel.movie = popularMovie
+                viewModel.media = popularMovie
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
             }
         }

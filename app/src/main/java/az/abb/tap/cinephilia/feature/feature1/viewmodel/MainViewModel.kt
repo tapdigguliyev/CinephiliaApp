@@ -5,9 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
-import az.abb.tap.cinephilia.feature.feature1.model.movies.Movie
+import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
 import az.abb.tap.cinephilia.utility.toGenre
@@ -29,18 +30,22 @@ class MainViewModel @Inject constructor(
     private val _popularMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
     val popularMovies: LiveData<Resource<MoviesResponse>> = _popularMovies
 
-    private val _topRatedTVShows: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
-    val topRatedTVShows: LiveData<Resource<MoviesResponse>> = _topRatedTVShows
+    private val _topRatedTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
+    val topRatedTVShows: LiveData<Resource<SeriesResponse>> = _topRatedTVShows
+
+    private val _popularTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
+    val popularTVShows: LiveData<Resource<SeriesResponse>> = _popularTVShows
 
     var movieGenres: MutableList<Genre> = mutableListOf()
 
-    var movie: Movie? = null
+    var media: Media? = null
 
     init {
         getTopRatedMovies()
         getPopularMovies()
         getGenres()
         getTopRatedTVShows()
+        getPopularTVShows()
     }
 
     private fun getTopRatedMovies() = viewModelScope.launch {
@@ -82,7 +87,7 @@ class MainViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideTopRatedTVShows()
-                _topRatedTVShows.postValue(handleMoviesResponse(response))
+                _topRatedTVShows.postValue(handleSeriesResponse(response))
             } else {
                 _topRatedTVShows.postValue(Resource.Error("No internet connection"))
             }
@@ -94,7 +99,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun getPopularTVShows() = viewModelScope.launch {
+        _popularTVShows.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.providePopularTVShows()
+                _popularTVShows.postValue(handleSeriesResponse(response))
+            } else {
+                _popularTVShows.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _popularTVShows.postValue(Resource.Error("Network Failure"))
+                else -> _popularTVShows.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
     private fun handleMoviesResponse(response: Response<MoviesResponse>): Resource<MoviesResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
+    }
+
+    private fun handleSeriesResponse(response: Response<SeriesResponse>): Resource<SeriesResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
