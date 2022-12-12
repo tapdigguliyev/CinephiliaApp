@@ -36,4 +36,14 @@ interface ApiService {
         @Query("language")
         language: String = "en-US"
     ): Response<GenresResponse>
+
+    @GET("tv/top_rated")
+    suspend fun getTopRatedTvShows(
+        @Query("api_key")
+        apiKey: String = API_KEY,
+        @Query("language")
+        language: String = "en-US",
+        @Query("page")
+        page: Int = 1
+    ) : Response<MoviesResponse>
 }

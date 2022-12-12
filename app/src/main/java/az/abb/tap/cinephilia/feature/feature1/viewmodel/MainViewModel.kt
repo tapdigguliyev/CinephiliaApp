@@ -29,6 +29,9 @@ class MainViewModel @Inject constructor(
     private val _popularMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
     val popularMovies: LiveData<Resource<MoviesResponse>> = _popularMovies
 
+    private val _topRatedTVShows: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
+    val topRatedTVShows: LiveData<Resource<MoviesResponse>> = _topRatedTVShows
+
     var movieGenres: MutableList<Genre> = mutableListOf()
 
     var movie: Movie? = null
@@ -37,6 +40,7 @@ class MainViewModel @Inject constructor(
         getTopRatedMovies()
         getPopularMovies()
         getGenres()
+        getTopRatedTVShows()
     }
 
     private fun getTopRatedMovies() = viewModelScope.launch {
@@ -69,6 +73,23 @@ class MainViewModel @Inject constructor(
             when(error) {
                 is IOException -> _popularMovies.postValue(Resource.Error("Network Failure"))
                 else -> _popularMovies.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
+    private fun getTopRatedTVShows() = viewModelScope.launch {
+        _topRatedTVShows.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.provideTopRatedTVShows()
+                _topRatedTVShows.postValue(handleMoviesResponse(response))
+            } else {
+                _topRatedTVShows.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _topRatedTVShows.postValue(Resource.Error("Network Failure"))
+                else -> _topRatedTVShows.postValue(Resource.Error("Conversion Error"))
             }
         }
     }

@@ -8,4 +8,5 @@ interface MediaProvider {
     suspend fun provideTopRatedMovies(): Response<MoviesResponse>
     suspend fun providePopularMovies(): Response<MoviesResponse>
     suspend fun provideMovieGenres(): Response<GenresResponse>
+    suspend fun provideTopRatedTVShows(): Response<MoviesResponse>
 }
