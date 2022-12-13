@@ -4,6 +4,7 @@ import az.abb.tap.cinephilia.data.network.tmdb.ApiService
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenresResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import retrofit2.Response
 
@@ -31,5 +32,9 @@ class MediaRepository(private val apiService: ApiService) : MediaProvider {
 
     override suspend fun provideMovieDetails(movieId: Int): Response<MovieDetailsResponse> {
         return apiService.getMovieDetails(movieId)
+    }
+
+    override suspend fun provideSerieDetails(tvId: Int): Response<SerieDetailsResponse> {
+        return apiService.getSerieDetails(tvId)
     }
 }

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.databinding.FragmentDetailsBinding
+import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.DetailsViewModel
 import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
@@ -39,57 +40,101 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getMovieDetails(args.mediaId)
+        when(args.mediaType) {
+            "MOVIES" -> {
+                viewModel.getMovieDetails(args.mediaId)
+                viewModel.movie.observe(viewLifecycleOwner) { responseResource ->
+                    when (responseResource) {
+                        is Resource.Success -> {
+                            binding.pbMovieDetails.makeInvisible()
+                            responseResource.data?.let { movieDetailsResponse ->
 
-        viewModel.movie.observe(viewLifecycleOwner) { responseResource ->
-            when(responseResource) {
-                is Resource.Success -> {
-                    binding.pbMovieDetails.makeInvisible()
-                    responseResource.data?.let { movieDetailsResponse ->
-                        val movie = movieDetailsResponse.toMovieDetails()
-
-                        (activity as AppCompatActivity).apply {
-                            val toolbar = this.findViewById<Toolbar>(R.id.toolbar)
-                            setSupportActionBar(toolbar)
-                            supportActionBar?.title = movie.title
-
-                            toolbar.setNavigationOnClickListener {
-                                findNavController().navigateUp()
+                                val movie = movieDetailsResponse.toMediaDetails()
+                                setToolbar(movie)
+                                setViews(movie)
+                                CoroutineScope(Dispatchers.IO).launch { setColors(movie) }
                             }
                         }
-
-                        glide.load(movie.poster_path).into(binding.ivMovie)
-                        binding.tvMovieName.text = movie.title
-                        binding.tvMovieOriginalTitle.text = movie.original_title
-                        binding.tvMovieGenres.text = movie.getGenreNames().toStr()
-                        binding.tvMovieYear.text = movie.release_date.getYearFromDate()
-                        binding.tvMovieDescription.text = movie.overview
-
-                        CoroutineScope(Dispatchers.IO).launch {
-                            binding.movieDetailsLayout.assignColors(
-                                requireContext(),
-                                movie.poster_path,
-                                glide,
-                                binding.tvMovieName,
-                                binding.tvMovieOriginalTitle,
-                                binding.tvMovieGenres,
-                                binding.tvMovieYear,
-                                binding.tvMovieDescription
-                            )
+                        is Resource.Error -> {
+                            binding.pbMovieDetails.makeInvisible()
+                            responseResource.message?.let { message ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "An error occurred: $message",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                        is Resource.Loading -> {
+                            binding.pbMovieDetails.makeVisible()
                         }
                     }
                 }
-                is Resource.Error -> {
-                    binding.pbMovieDetails.makeInvisible()
-                    responseResource.message?.let { message ->
-                        Toast.makeText(requireContext(), "An error occurred: $message", Toast.LENGTH_LONG).show()
+            }
+            "SERIES" -> {
+                viewModel.getSeriesDetails(args.mediaId)
+                viewModel.serie.observe(viewLifecycleOwner) { responseResource ->
+                    when (responseResource) {
+                        is Resource.Success -> {
+                            binding.pbMovieDetails.makeInvisible()
+                            responseResource.data?.let { serieDetailsResponse ->
+
+                                val serie = serieDetailsResponse.toMediaDetails()
+                                setToolbar(serie)
+                                setViews(serie)
+                                CoroutineScope(Dispatchers.IO).launch { setColors(serie) }
+                            }
+                        }
+                        is Resource.Error -> {
+                            binding.pbMovieDetails.makeInvisible()
+                            responseResource.message?.let { message ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "An error occurred: $message",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                        is Resource.Loading -> {
+                            binding.pbMovieDetails.makeVisible()
+                        }
                     }
                 }
-                is Resource.Loading -> {
-                    binding.pbMovieDetails.makeVisible()
-                }
             }
-
         }
+    }
+
+    private fun setToolbar(media: MediaDetails) {
+        (activity as AppCompatActivity).apply {
+            val toolbar = this.findViewById<Toolbar>(R.id.toolbar)
+            setSupportActionBar(toolbar)
+            supportActionBar?.title = media.title
+
+            toolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun setColors(media: MediaDetails) {
+        binding.movieDetailsLayout.assignColors(
+            requireContext(),
+            media.poster_path,
+            glide,
+            binding.tvMovieName,
+            binding.tvMovieOriginalTitle,
+            binding.tvMovieGenres,
+            binding.tvMovieYear,
+            binding.tvMovieDescription
+        )
+    }
+
+    private fun setViews(media: MediaDetails) {
+        glide.load(media.poster_path).into(binding.ivMovie)
+        binding.tvMovieName.text = media.title
+        binding.tvMovieOriginalTitle.text = media.original_title
+        binding.tvMovieGenres.text = media.getGenreNames().toStr()
+        binding.tvMovieYear.text = media.release_date.getYearFromDate()
+        binding.tvMovieDescription.text = media.overview
     }
 }

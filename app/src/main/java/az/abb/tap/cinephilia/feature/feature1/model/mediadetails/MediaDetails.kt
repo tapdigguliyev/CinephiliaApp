@@ -1,8 +1,8 @@
-package az.abb.tap.cinephilia.feature.feature1.model.moviedetails
+package az.abb.tap.cinephilia.feature.feature1.model.mediadetails
 
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 
-data class MovieDetails(
+data class MediaDetails(
     val id: Int,
     val genres: MutableList<Genre>,
     val original_title: String,

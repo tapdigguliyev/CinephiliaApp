@@ -124,7 +124,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, topRatedTVShow.idBundle())
+                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, topRatedTVShow.idBundle("SERIES"))
             }
         }
     }
@@ -154,7 +154,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, popularTVShow.idBundle())
+                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, popularTVShow.idBundle("SERIES"))
             }
         }
     }

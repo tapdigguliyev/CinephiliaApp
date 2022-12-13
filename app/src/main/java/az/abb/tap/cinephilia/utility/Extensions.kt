@@ -15,12 +15,14 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.Detail
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SeriesGenre
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSeries
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.model.media.Medias
-import az.abb.tap.cinephilia.feature.feature1.model.moviedetails.MovieDetails
+import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import com.bumptech.glide.RequestManager
 
 fun MoviesResponse.toMedias() =
@@ -67,8 +69,8 @@ fun GenreInfo.toGenre() =
         name = name
     )
 
-fun MovieDetailsResponse.toMovieDetails() =
-    MovieDetails(
+fun MovieDetailsResponse.toMediaDetails() =
+    MediaDetails(
         id = id,
         genres = genres.map { it.toNewGenre() }.toMutableList(),
         original_title = original_title,
@@ -80,7 +82,26 @@ fun MovieDetailsResponse.toMovieDetails() =
         vote_average = vote_average
     )
 
+fun SerieDetailsResponse.toMediaDetails() =
+    MediaDetails(
+        id = id,
+        genres = genres.map { it.toNewGenre() }.toMutableList(),
+        original_title = original_name,
+        overview = overview,
+        poster_path = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
+        release_date = first_air_date,
+        runtime = 0,
+        title = name,
+        vote_average = vote_average
+    )
+
 fun DetailGenre.toNewGenre() =
+    Genre(
+        id = id,
+        name = name
+    )
+
+fun SeriesGenre.toNewGenre() =
     Genre(
         id = id,
         name = name
@@ -103,7 +124,7 @@ fun Media.getListOfSpecificGenreNames(movieGenres: MutableList<Genre>): List<Str
     return specificMovieGenres.map { it.name }
 }
 
-fun MovieDetails.getGenreNames(): List<String> {
+fun MediaDetails.getGenreNames(): List<String> {
     val genreNames: MutableList<String> = mutableListOf()
     this.genres.forEach { genre ->
         genreNames.add(genre.name)
@@ -162,7 +183,8 @@ fun Int.isDark(): Boolean {
 fun String.getYearFromDate() =
     this.split("-")[0]
 
-fun Media.idBundle() =
+fun Media.idBundle(mediaType: String) =
     Bundle().apply {
         putInt("mediaId", id)
+        putString("mediaType", mediaType)
     }

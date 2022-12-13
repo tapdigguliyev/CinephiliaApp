@@ -31,5 +31,8 @@
         <argument
             android:name="mediaId"
             app:argType="integer" />
+        <argument
+            android:name="mediaType"
+            app:argType="string" />
     </fragment>
 </navigation>
