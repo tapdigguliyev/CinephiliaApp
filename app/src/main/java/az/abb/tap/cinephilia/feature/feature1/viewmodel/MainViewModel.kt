@@ -36,11 +36,13 @@ class MainViewModel @Inject constructor(
     val popularTVShows: LiveData<Resource<SeriesResponse>> = _popularTVShows
 
     var movieGenres: MutableList<Genre> = mutableListOf()
+    var tVShowGenres: MutableList<Genre> = mutableListOf()
 
     init {
         getTopRatedMovies()
         getPopularMovies()
-        getGenres()
+        getMovieGenres()
+        getTVShowGenres()
         getTopRatedTVShows()
         getPopularTVShows()
     }
@@ -131,11 +133,20 @@ class MainViewModel @Inject constructor(
         return Resource.Error(response.message())
     }
 
-    private fun getGenres() = viewModelScope.launch {
+    private fun getMovieGenres() = viewModelScope.launch {
         if (networkStatusChecker.hasInternetConnection()) {
             val response = mediaRepository.provideMovieGenres()
             if (response.isSuccessful) {
                 movieGenres.addAll(response.body()?.genres?.map { it.toGenre() }!!)
+            }
+        }
+    }
+
+    private fun getTVShowGenres() = viewModelScope.launch {
+        if (networkStatusChecker.hasInternetConnection()) {
+            val response = mediaRepository.provideTVShowGenres()
+            if (response.isSuccessful) {
+                tVShowGenres.addAll(response.body()?.genres?.map { it.toGenre() }!!)
             }
         }
     }

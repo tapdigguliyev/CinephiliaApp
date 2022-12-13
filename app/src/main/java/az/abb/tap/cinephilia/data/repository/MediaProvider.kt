@@ -15,4 +15,5 @@ interface MediaProvider {
     suspend fun providePopularTVShows(): Response<SeriesResponse>
     suspend fun provideMovieDetails(movieId: Int): Response<MovieDetailsResponse>
     suspend fun provideSerieDetails(tvId: Int): Response<SerieDetailsResponse>
+    suspend fun provideTVShowGenres(): Response<GenresResponse>
 }

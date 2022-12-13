@@ -109,7 +109,7 @@ class SeriesFragment : Fragment() {
 
             view.tvMediaName.text = topRatedTVShow.title
             view.tvMediaYear.text = topRatedTVShow.releaseDate.getYearFromDate()
-            view.tvMediaGenre.text = topRatedTVShow.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
+            view.tvMediaGenre.text = topRatedTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
             glide.load(topRatedTVShow.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -139,7 +139,7 @@ class SeriesFragment : Fragment() {
 
             view.tvMediaName.text = popularTVShow.title
             view.tvMediaYear.text = popularTVShow.releaseDate.getYearFromDate()
-            view.tvMediaGenre.text = popularTVShow.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
+            view.tvMediaGenre.text = popularTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
             glide.load(popularTVShow.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {

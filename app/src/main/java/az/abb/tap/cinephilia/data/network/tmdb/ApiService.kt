@@ -80,4 +80,12 @@ interface ApiService {
         @Query("language")
         language: String = "en-US"
     ): Response<SerieDetailsResponse>
+
+    @GET("genre/tv/list")
+    suspend fun getTVShowGenres(
+        @Query("api_key")
+        apiKey: String = API_KEY,
+        @Query("language")
+        language: String = "en-US"
+    ): Response<GenresResponse>
 }

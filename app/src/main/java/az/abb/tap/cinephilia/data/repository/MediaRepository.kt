@@ -37,4 +37,8 @@ class MediaRepository(private val apiService: ApiService) : MediaProvider {
     override suspend fun provideSerieDetails(tvId: Int): Response<SerieDetailsResponse> {
         return apiService.getSerieDetails(tvId)
     }
+
+    override suspend fun provideTVShowGenres(): Response<GenresResponse> {
+        return apiService.getTVShowGenres()
+    }
 }
