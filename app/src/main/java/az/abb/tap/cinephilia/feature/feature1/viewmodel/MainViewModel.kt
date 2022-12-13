@@ -1,5 +1,6 @@
 package az.abb.tap.cinephilia.feature.feature1.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,10 +9,11 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesRespons
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
-import az.abb.tap.cinephilia.feature.feature1.model.media.Media
+import az.abb.tap.cinephilia.feature.feature1.model.moviedetails.MovieDetails
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
 import az.abb.tap.cinephilia.utility.toGenre
+import az.abb.tap.cinephilia.utility.toMovieDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -38,7 +40,7 @@ class MainViewModel @Inject constructor(
 
     var movieGenres: MutableList<Genre> = mutableListOf()
 
-    var media: Media? = null
+    var movie: MovieDetails? = null
 
     init {
         getTopRatedMovies()
@@ -78,6 +80,16 @@ class MainViewModel @Inject constructor(
             when(error) {
                 is IOException -> _popularMovies.postValue(Resource.Error("Network Failure"))
                 else -> _popularMovies.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
+    fun getMovieDetails(movieId: Int) = viewModelScope.launch {
+        if (networkStatusChecker.hasInternetConnection()) {
+            val response = mediaRepository.provideMovieDetails(movieId)
+            if (response.isSuccessful) {
+                movie = response.body()?.toMovieDetails()
+                Log.d("MainViewModel", movie?.title ?: "Null")
             }
         }
     }

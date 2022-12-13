@@ -1,6 +1,7 @@
 package az.abb.tap.cinephilia.feature.feature1.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,7 @@ import androidx.navigation.fragment.findNavController
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.databinding.FragmentDetailsBinding
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
-import az.abb.tap.cinephilia.utility.assignColors
-import az.abb.tap.cinephilia.utility.getListOfSpecificGenreNames
-import az.abb.tap.cinephilia.utility.getYearFromDate
-import az.abb.tap.cinephilia.utility.toStr
+import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -41,25 +39,26 @@ class DetailsFragment : Fragment() {
         (activity as AppCompatActivity).apply {
             val toolbar = this.findViewById<Toolbar>(R.id.toolbar)
             setSupportActionBar(toolbar)
-            supportActionBar?.title = viewModel.media?.title
+            supportActionBar?.title = viewModel.movie?.title
 
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
         }
-
-        viewModel.media?.let { movie ->
-            glide.load(movie.imageLink).into(binding.ivMovie)
+        Log.d("MainViewModel", viewModel.movie?.title ?: "Null")
+        viewModel.movie?.let { movie ->
+            Log.d("DetailsFragment", movie.title)
+            glide.load(movie.poster_path).into(binding.ivMovie)
             binding.tvMovieName.text = movie.title
-            binding.tvMovieOriginalTitle.text = movie.originalTitle
-            binding.tvMovieGenres.text = movie.getListOfSpecificGenreNames(viewModel.movieGenres).toStr()
-            binding.tvMovieYear.text = movie.releaseDate.getYearFromDate()
+            binding.tvMovieOriginalTitle.text = movie.original_title
+            binding.tvMovieGenres.text = movie.getGenreNames().toStr()
+            binding.tvMovieYear.text = movie.release_date.getYearFromDate()
             binding.tvMovieDescription.text = movie.overview
 
             CoroutineScope(Dispatchers.IO).launch {
                 binding.movieDetailsLayout.assignColors(
                     requireContext(),
-                    movie.imageLink,
+                    movie.poster_path,
                     glide,
                     binding.tvMovieName,
                     binding.tvMovieOriginalTitle,

@@ -10,6 +10,8 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
+import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.DetailGenre
+import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSeries
@@ -17,6 +19,7 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesRespon
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.model.media.Medias
+import az.abb.tap.cinephilia.feature.feature1.model.moviedetails.MovieDetails
 import com.bumptech.glide.RequestManager
 
 fun MoviesResponse.toMedias() =
@@ -29,6 +32,7 @@ fun MoviesResponse.toMedias() =
 
 fun Result.toMedia() =
     Media(
+        id = id,
         title = title,
         originalTitle = original_title,
         genreIds = genre_ids,
@@ -47,6 +51,7 @@ fun SeriesResponse.toMedias() =
 
 fun ResultSeries.toMedia() =
     Media(
+        id = id,
         title = name,
         originalTitle = original_name,
         genreIds = genre_ids,
@@ -56,6 +61,25 @@ fun ResultSeries.toMedia() =
     )
 
 fun GenreInfo.toGenre() =
+    Genre(
+        id = id,
+        name = name
+    )
+
+fun MovieDetailsResponse.toMovieDetails() =
+    MovieDetails(
+        id = id,
+        genres = genres.map { it.toNewGenre() }.toMutableList(),
+        original_title = original_title,
+        overview = overview,
+        poster_path = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
+        release_date = release_date,
+        runtime = runtime,
+        title = title,
+        vote_average = vote_average
+    )
+
+fun DetailGenre.toNewGenre() =
     Genre(
         id = id,
         name = name
@@ -76,6 +100,14 @@ fun Media.getListOfSpecificGenreNames(movieGenres: MutableList<Genre>): List<Str
         specificMovieGenres.addAll(movieGenres.filter { it.id == genreId })
     }
     return specificMovieGenres.map { it.name }
+}
+
+fun MovieDetails.getGenreNames(): List<String> {
+    val genreNames: MutableList<String> = mutableListOf()
+    this.genres.forEach { genre ->
+        genreNames.add(genre.name)
+    }
+    return genreNames
 }
 
 fun View.makeVisible() {

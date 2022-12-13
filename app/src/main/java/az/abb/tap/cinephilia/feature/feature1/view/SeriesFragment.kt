@@ -124,7 +124,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                viewModel.media = topRatedTVShow
+//                viewModel.movie = topRatedTVShow
                 findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment)
             }
         }
@@ -155,7 +155,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                viewModel.media = popularTVShow
+//                viewModel.movie = popularTVShow
                 findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment )
             }
         }
