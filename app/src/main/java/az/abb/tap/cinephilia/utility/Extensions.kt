@@ -2,6 +2,7 @@ package az.abb.tap.cinephilia.utility
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -160,3 +161,8 @@ fun Int.isDark(): Boolean {
 
 fun String.getYearFromDate() =
     this.split("-")[0]
+
+fun Media.idBundle() =
+    Bundle().apply {
+        putInt("mediaId", id)
+    }

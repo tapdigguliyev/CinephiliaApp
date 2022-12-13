@@ -2,12 +2,12 @@ package az.abb.tap.cinephilia.feature.feature1.view
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
@@ -29,7 +29,7 @@ class SeriesFragment : Fragment() {
     private lateinit var binding: FragmentSeriesBinding
     private val topRatedSeriesAdapter by lazy { BaseAdapter<Media>() }
     private val popularSeriesAdapter by lazy { BaseAdapter<Media>() }
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by viewModels()
 
     @Inject
     lateinit var glide: RequestManager
@@ -124,8 +124,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-//                viewModel.movie = topRatedTVShow
-                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment)
+                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, topRatedTVShow.idBundle())
             }
         }
     }
@@ -155,8 +154,7 @@ class SeriesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-//                viewModel.movie = popularTVShow
-                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment )
+                findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, popularTVShow.idBundle())
             }
         }
     }

@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_movies">
         <action
             android:id="@+id/action_moviesFragment_to_movieDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/detailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesFragment"
@@ -21,18 +21,15 @@
         tools:layout="@layout/fragment_series" >
         <action
             android:id="@+id/action_seriesFragment_to_movieDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/detailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/movieDetailsFragment"
+        android:id="@+id/detailsFragment"
         android:name="az.abb.tap.cinephilia.feature.feature1.view.DetailsFragment"
         android:label="fragment_movie_details"
         tools:layout="@layout/fragment_details">
-        <action
-            android:id="@+id/action_movieDetailsFragment_to_moviesFragment"
-            app:destination="@id/moviesFragment" />
-        <action
-            android:id="@+id/action_movieDetailsFragment_to_seriesFragment"
-            app:destination="@id/seriesFragment" />
+        <argument
+            android:name="mediaId"
+            app:argType="integer" />
     </fragment>
 </navigation>

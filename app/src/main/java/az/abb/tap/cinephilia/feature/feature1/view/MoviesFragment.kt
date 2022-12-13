@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
@@ -29,8 +29,7 @@ class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
     private val topRatedMoviesAdapter by lazy { BaseAdapter<Media>() }
     private val moviesAdapter by lazy { BaseAdapter<Media>() }
-    private val viewModel: MainViewModel by activityViewModels()
-
+    private val viewModel: MainViewModel by viewModels()
     @Inject
     lateinit var glide: RequestManager
 
@@ -128,8 +127,7 @@ class MoviesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-//                viewModel.media = topRatedMovie
-                findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
+                findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, topRatedMovie.idBundle())
             }
         }
     }
@@ -159,8 +157,7 @@ class MoviesFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-//                viewModel.media = popularMovie
-                findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment)
+                findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, popularMovie.idBundle())
             }
         }
     }
