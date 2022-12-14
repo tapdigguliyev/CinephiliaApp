@@ -110,6 +110,8 @@ class SeriesFragment : Fragment() {
             view.tvMediaName.text = topRatedTVShow.title
             view.tvMediaYear.text = topRatedTVShow.releaseDate.getYearFromDate()
             view.tvMediaGenre.text = topRatedTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
+            view.tvMediaRating.text = topRatedTVShow.rating.outOfTen()
+            view.tvMediaLanguage.text = topRatedTVShow.language
             glide.load(topRatedTVShow.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -119,7 +121,9 @@ class SeriesFragment : Fragment() {
                     glide,
                     view.tvMediaName,
                     view.tvMediaYear,
-                    view.tvMediaGenre
+                    view.tvMediaGenre,
+                    view.tvMediaRating,
+                    view.tvMediaLanguage
                 )
             }
 
@@ -140,6 +144,8 @@ class SeriesFragment : Fragment() {
             view.tvMediaName.text = popularTVShow.title
             view.tvMediaYear.text = popularTVShow.releaseDate.getYearFromDate()
             view.tvMediaGenre.text = popularTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
+            view.tvMediaRating.text = popularTVShow.rating.outOfTen()
+            view.tvMediaLanguage.text = popularTVShow.language
             glide.load(popularTVShow.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -149,7 +155,9 @@ class SeriesFragment : Fragment() {
                     glide,
                     view.tvMediaName,
                     view.tvMediaYear,
-                    view.tvMediaGenre
+                    view.tvMediaGenre,
+                    view.tvMediaRating,
+                    view.tvMediaLanguage
                 )
             }
 

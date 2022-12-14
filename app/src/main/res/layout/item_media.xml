@@ -25,9 +25,11 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="top"
             android:orientation="vertical"
             android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivMedia"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivMedia"
             app:layout_constraintTop_toTopOf="@id/ivMedia">
@@ -37,18 +39,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                tools:text="Media Name"/>
+                tools:text="Media Name" />
 
             <TextView
                 android:id="@+id/tvMediaGenre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:ellipsize="end"
                 android:maxLines="2"
+                android:paddingBottom="8dp"
                 android:textSize="15sp"
-                tools:text="Media Genre"/>
+                tools:text="Media Genre" />
 
             <TextView
                 android:id="@+id/tvMediaYear"
@@ -56,7 +62,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textSize="15sp"
-                tools:text="Media Year"/>
+                tools:text="Media Year" />
+
+            <TextView
+                android:id="@+id/tvMediaRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="15sp"
+                tools:text="Media Rating" />
+
+            <TextView
+                android:id="@+id/tvMediaLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="15sp"
+                tools:text="Media Language" />
 
         </LinearLayout>
 

@@ -7,5 +7,7 @@ data class Media (
     val genreIds: List<Int>,
     val overview: String,
     val imageLink: String,
-    val releaseDate: String
+    val releaseDate: String,
+    val language: String,
+    val rating: Double
 )

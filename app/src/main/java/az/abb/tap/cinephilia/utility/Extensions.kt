@@ -41,7 +41,9 @@ fun Result.toMedia() =
         genreIds = genre_ids,
         overview = overview,
         imageLink = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
-        releaseDate = release_date
+        releaseDate = release_date,
+        language = original_language,
+        rating = vote_average
     )
 
 fun SeriesResponse.toMedias() =
@@ -60,7 +62,9 @@ fun ResultSeries.toMedia() =
         genreIds = genre_ids,
         overview = overview,
         imageLink = String.format("https://image.tmdb.org/t/p/original%s", poster_path),
-        releaseDate = first_air_date
+        releaseDate = first_air_date,
+        language = original_language,
+        rating = vote_average
     )
 
 fun GenreInfo.toGenre() =
@@ -188,3 +192,6 @@ fun Media.idBundle(mediaType: String) =
         putInt("mediaId", id)
         putString("mediaType", mediaType)
     }
+
+fun Double.outOfTen() =
+    toString() + "/10"
