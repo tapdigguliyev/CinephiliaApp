@@ -8,7 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.base.BaseAdapter
@@ -54,12 +57,23 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observeTopRatedMovies() {
+        lifecycleScope.launch {
+            viewModel.getMovieList().observe(viewLifecycleOwner) {
+                it?.let {
+                    val mediaPagingData = it.map { result ->
+                        result.toMedia()
+                    }
+                    topRatedMoviesAdapter.submitData(lifecycle, mediaPagingData)
+                }
+            }
+        }
         viewModel.topRatedMovies.observe(viewLifecycleOwner) { responseResource ->
             when (responseResource) {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+//                        topRatedMoviesAdapter.submitData(lifecycle, response.toMedias().movies.toMutableList())
+//                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -83,7 +97,7 @@ class MoviesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbPopularMovies.makeInvisible()
                     responseResource.data?.let { response ->
-                        moviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+//                        moviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -132,6 +146,27 @@ class MoviesFragment : Fragment() {
 
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, topRatedMovie.idBundle("MOVIES"))
+            }
+        }
+
+        topRatedMoviesAdapter.addLoadStateListener { loadState ->
+            // show empty list
+            if (loadState.refresh is LoadState.Loading ||
+                loadState.append is LoadState.Loading)
+                binding.pbTopRatedMovies.makeVisible()
+            else {
+                binding.pbTopRatedMovies.makeInvisible()
+                // If we have an error, show a toast
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
+                }
+
             }
         }
     }

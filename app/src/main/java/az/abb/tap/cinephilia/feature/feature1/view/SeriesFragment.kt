@@ -56,7 +56,7 @@ class SeriesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbTopRatedTVShows.makeInvisible()
                     responseResource.data?.let { response ->
-                        topRatedSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+//                        topRatedSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -80,7 +80,7 @@ class SeriesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbPopularTVShows.makeInvisible()
                     responseResource.data?.let { response ->
-                        popularSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+//                        popularSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 

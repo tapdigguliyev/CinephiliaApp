@@ -4,7 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
@@ -38,6 +41,8 @@ class MainViewModel @Inject constructor(
     var movieGenres: MutableList<Genre> = mutableListOf()
     var tVShowGenres: MutableList<Genre> = mutableListOf()
 
+    val errorMessage = MutableLiveData<String>()
+
     init {
         getTopRatedMovies()
         getPopularMovies()
@@ -45,6 +50,10 @@ class MainViewModel @Inject constructor(
         getTVShowGenres()
         getTopRatedTVShows()
         getPopularTVShows()
+    }
+
+    fun getMovieList(): LiveData<PagingData<Result>> {
+        return mediaRepository.getAllMovies().cachedIn(viewModelScope)
     }
 
     private fun getTopRatedMovies() = viewModelScope.launch {
