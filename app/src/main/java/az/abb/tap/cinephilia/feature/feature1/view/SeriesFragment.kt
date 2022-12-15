@@ -38,6 +38,18 @@ class SeriesFragment : Fragment() {
     @Inject
     lateinit var glide: RequestManager
 
+    companion object {
+        private val TAG = this::class.simpleName
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenResumed {
+            observeTopRatedTVShows()
+            observePopularTVShows()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSeriesBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,9 +61,6 @@ class SeriesFragment : Fragment() {
         setupTVShowsRecyclerView()
         setupTopRatedTVShowsAdapter()
         setupTVShowsAdapter()
-
-        observeTopRatedTVShows()
-        observePopularTVShows()
     }
 
     private fun observeTopRatedTVShows() {
@@ -67,7 +76,7 @@ class SeriesFragment : Fragment() {
                 is Resource.Error -> {
                     binding.pbTopRatedTVShows.makeInvisible()
                     responseResource.message?.let { message ->
-                        Log.e(MoviesFragment.TAG, "An error occurred: $message")
+                        Log.e(TAG, "An error occurred: $message")
                     }
                 }
 

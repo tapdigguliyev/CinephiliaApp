@@ -39,9 +39,16 @@ class MoviesFragment : Fragment() {
     lateinit var glide: RequestManager
 
     companion object {
-        val TAG = this::class.simpleName
+        private val TAG = this::class.simpleName
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenResumed {
+            observePopularMovies()
+            observeTopRatedMovies()
+        }
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMoviesBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -53,9 +60,6 @@ class MoviesFragment : Fragment() {
         setupPopularMoviesRecyclerView()
         setupTopRatedMoviesAdapter()
         setupMoviesAdapter()
-
-        observeTopRatedMovies()
-        observePopularMovies()
     }
 
     private fun observeTopRatedMovies() {
