@@ -45,6 +45,8 @@ class MoviesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenResumed {
+            viewModel.getMovieGenres()
+            viewModel.getTopRatedMovies()
             observePopularMovies()
             observeTopRatedMovies()
         }

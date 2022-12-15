@@ -45,6 +45,8 @@ class SeriesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenResumed {
+            viewModel.getTVShowGenres()
+            viewModel.getTopRatedTVShows()
             observeTopRatedTVShows()
             observePopularTVShows()
         }

@@ -37,13 +37,6 @@ class MainViewModel @Inject constructor(
     var movieGenres: MutableList<Genre> = mutableListOf()
     var tVShowGenres: MutableList<Genre> = mutableListOf()
 
-    init {
-        getTopRatedMovies()
-        getMovieGenres()
-        getTVShowGenres()
-        getTopRatedTVShows()
-    }
-
     suspend fun getPopularMovieList(): LiveData<PagingData<ResultMovie>> {
         return mediaRepository.providePopularMovies().liveData.cachedIn(viewModelScope)
     }
@@ -52,7 +45,7 @@ class MainViewModel @Inject constructor(
         return mediaRepository.providePopularTVShows().cachedIn(viewModelScope)
     }
 
-    private fun getTopRatedMovies() = viewModelScope.launch {
+    fun getTopRatedMovies() = viewModelScope.launch {
         _topRatedMovies.postValue(Resource.Loading())
         try {
             if (networkStatusChecker.hasInternetConnection()) {
@@ -69,7 +62,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getTopRatedTVShows() = viewModelScope.launch {
+    fun getTopRatedTVShows() = viewModelScope.launch {
         _topRatedTVShows.postValue(Resource.Loading())
         try {
             if (networkStatusChecker.hasInternetConnection()) {
@@ -104,7 +97,7 @@ class MainViewModel @Inject constructor(
         return Resource.Error(response.message())
     }
 
-    private fun getMovieGenres() = viewModelScope.launch {
+    fun getMovieGenres() = viewModelScope.launch {
         if (networkStatusChecker.hasInternetConnection()) {
             val response = mediaRepository.provideMovieGenres()
             if (response.isSuccessful) {
@@ -113,7 +106,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getTVShowGenres() = viewModelScope.launch {
+    fun getTVShowGenres() = viewModelScope.launch {
         if (networkStatusChecker.hasInternetConnection()) {
             val response = mediaRepository.provideTVShowGenres()
             if (response.isSuccessful) {
