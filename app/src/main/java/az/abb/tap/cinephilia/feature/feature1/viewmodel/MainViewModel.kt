@@ -7,15 +7,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.liveData
+import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenresResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSerie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
-import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
-import az.abb.tap.cinephilia.utility.toGenre
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -34,8 +33,11 @@ class MainViewModel @Inject constructor(
     private val _topRatedTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
     val topRatedTVShows: LiveData<Resource<SeriesResponse>> = _topRatedTVShows
 
-    var movieGenres: MutableList<Genre> = mutableListOf()
-    var tVShowGenres: MutableList<Genre> = mutableListOf()
+    private val _movieGenres: MutableLiveData<Resource<GenresResponse>> = MutableLiveData()
+    val movieGenres: LiveData<Resource<GenresResponse>> = _movieGenres
+
+    private val _tvShowGenres: MutableLiveData<Resource<GenresResponse>> = MutableLiveData()
+    val tvShowGenres: LiveData<Resource<GenresResponse>> = _tvShowGenres
 
     suspend fun getPopularMovieList(): LiveData<PagingData<ResultMovie>> {
         return mediaRepository.providePopularMovies().liveData.cachedIn(viewModelScope)
@@ -79,6 +81,40 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getMovieGenres() = viewModelScope.launch {
+        _movieGenres.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.provideMovieGenres()
+                _movieGenres.postValue(handleGenresResponse(response))
+            } else {
+                _movieGenres.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _movieGenres.postValue(Resource.Error("Network Failure"))
+                else -> _movieGenres.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
+    fun getTVShowGenres() = viewModelScope.launch {
+        _tvShowGenres.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.provideTVShowGenres()
+                _tvShowGenres.postValue(handleGenresResponse(response))
+            } else {
+                _tvShowGenres.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _tvShowGenres.postValue(Resource.Error("Network Failure"))
+                else -> _tvShowGenres.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
     private fun handleMoviesResponse(response: Response<MoviesResponse>): Resource<MoviesResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
@@ -97,21 +133,12 @@ class MainViewModel @Inject constructor(
         return Resource.Error(response.message())
     }
 
-    fun getMovieGenres() = viewModelScope.launch {
-        if (networkStatusChecker.hasInternetConnection()) {
-            val response = mediaRepository.provideMovieGenres()
-            if (response.isSuccessful) {
-                movieGenres.addAll(response.body()?.genres?.map { it.toGenre() }!!)
+    private fun handleGenresResponse(response: Response<GenresResponse>): Resource<GenresResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
             }
         }
-    }
-
-    fun getTVShowGenres() = viewModelScope.launch {
-        if (networkStatusChecker.hasInternetConnection()) {
-            val response = mediaRepository.provideTVShowGenres()
-            if (response.isSuccessful) {
-                tVShowGenres.addAll(response.body()?.genres?.map { it.toGenre() }!!)
-            }
-        }
+        return Resource.Error(response.message())
     }
 }

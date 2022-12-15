@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
@@ -18,6 +17,7 @@ import az.abb.tap.cinephilia.base.BaseAdapter
 import az.abb.tap.cinephilia.base.BasePagingAdapter
 import az.abb.tap.cinephilia.databinding.FragmentSeriesBinding
 import az.abb.tap.cinephilia.databinding.ItemMediaBinding
+import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.MainViewModel
 import az.abb.tap.cinephilia.utility.*
@@ -34,6 +34,7 @@ class SeriesFragment : Fragment() {
     private val topRatedSeriesAdapter by lazy { BaseAdapter<Media>() }
     private val popularSeriesAdapter by lazy { BasePagingAdapter<Media>() }
     private val viewModel: MainViewModel by viewModels()
+    private val genres: MutableList<Genre> = mutableListOf()
 
     @Inject
     lateinit var glide: RequestManager
@@ -46,9 +47,7 @@ class SeriesFragment : Fragment() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenResumed {
             viewModel.getTVShowGenres()
-            viewModel.getTopRatedTVShows()
-            observeTopRatedTVShows()
-            observePopularTVShows()
+            observeTVShowGenresAndObservers()
         }
     }
 
@@ -63,6 +62,35 @@ class SeriesFragment : Fragment() {
         setupTVShowsRecyclerView()
         setupTopRatedTVShowsAdapter()
         setupTVShowsAdapter()
+    }
+
+    private fun observeTVShowGenresAndObservers() {
+        viewModel.tvShowGenres.observe(viewLifecycleOwner) { responseResource ->
+            when (responseResource) {
+                is Resource.Success -> {
+                    val genreList = responseResource.data?.genres?.map { it.toGenre() }
+                    if (genreList != null) genres.addAll(genreList)
+
+                    viewModel.getTopRatedTVShows()
+                    observeTopRatedTVShows()
+                    observePopularTVShows()
+                }
+
+                is Resource.Error -> {
+                    binding.pbTopRatedTVShows.makeInvisible()
+                    binding.pbPopularTVShows.makeInvisible()
+                    responseResource.message?.let { message ->
+                        Log.e(TAG, "An error occurred: $message")
+                        Toast.makeText(requireContext(), "An error occurred: $message", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                is Resource.Loading -> {
+                    binding.pbTopRatedTVShows.makeVisible()
+                    binding.pbPopularTVShows.makeVisible()
+                }
+            }
+        }
     }
 
     private fun observeTopRatedTVShows() {
@@ -112,7 +140,7 @@ class SeriesFragment : Fragment() {
 
             view.tvMediaName.text = topRatedTVShow.title
             view.tvMediaYear.text = topRatedTVShow.releaseDate.getYearFromDate()
-            view.tvMediaGenre.text = topRatedTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
+            view.tvMediaGenre.text = topRatedTVShow.getListOfSpecificGenreNames(genres).toStr()
             view.tvMediaRating.text = topRatedTVShow.rating.outOfTen()
             view.tvMediaLanguage.text = topRatedTVShow.language
             glide.load(topRatedTVShow.imageLink).into(view.ivMedia)
@@ -146,7 +174,7 @@ class SeriesFragment : Fragment() {
 
             view.tvMediaName.text = popularTVShow.title
             view.tvMediaYear.text = popularTVShow.releaseDate.getYearFromDate()
-            view.tvMediaGenre.text = popularTVShow.getListOfSpecificGenreNames(viewModel.tVShowGenres).toStr()
+            view.tvMediaGenre.text = popularTVShow.getListOfSpecificGenreNames(genres).toStr()
             view.tvMediaRating.text = popularTVShow.rating.outOfTen()
             view.tvMediaLanguage.text = popularTVShow.language
             glide.load(popularTVShow.imageLink).into(view.ivMedia)
