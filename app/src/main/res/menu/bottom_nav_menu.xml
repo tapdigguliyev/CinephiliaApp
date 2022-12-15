@@ -9,4 +9,9 @@
         android:id="@+id/seriesFragment"
         android:icon="@drawable/ic_series"
         android:title="@string/series" />
+
+    <item
+        android:id="@+id/peopleFragment"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="@string/people" />
 </menu>

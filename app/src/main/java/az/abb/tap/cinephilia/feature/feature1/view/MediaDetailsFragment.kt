@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import az.abb.tap.cinephilia.R
-import az.abb.tap.cinephilia.databinding.FragmentDetailsBinding
+import az.abb.tap.cinephilia.databinding.FragmentMediaDetailsBinding
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.DetailsViewModel
 import az.abb.tap.cinephilia.utility.*
@@ -24,16 +24,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailsFragment : Fragment() {
-    private lateinit var binding: FragmentDetailsBinding
+class MediaDetailsFragment : Fragment() {
+    private lateinit var binding: FragmentMediaDetailsBinding
     private val viewModel: DetailsViewModel by viewModels()
-    private val args: DetailsFragmentArgs by navArgs()
+    private val args: MediaDetailsFragmentArgs by navArgs()
 
     @Inject
     lateinit var glide: RequestManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        binding = FragmentMediaDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 

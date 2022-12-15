@@ -3,6 +3,8 @@
     <string name="movies">Movies</string>
     <string name="series">Series</string>
     <string name="media_image">Media Image</string>
-    <string name="movie_description">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi mollis ac ante in tincidunt. Suspendisse felis neque, lobortis vitae maximus et, porta id mi. Sed sed dui justo. Etiam id ante lobortis, commodo enim ut, sollicitudin dolor. Maecenas at vehicula dui. Duis placerat lacus sed odio scelerisque, eget vulputate lorem aliquam. Nullam consequat fringilla leo, in pellentesque ex posuere nec. Sed nec urna dolor. Proin non suscipit mi. Integer varius, lorem non viverra convallis, nulla nisi eleifend lorem, vitae volutpat metus ex sed elit. Donec nec erat arcu. Nunc lobortis venenatis tortor, nec finibus nisi cursus id.</string>
+    <string name="movie_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi mollis ac ante in tincidunt. Suspendisse felis neque, lobortis vitae maximus et, porta id mi. Sed sed dui justo. Etiam id ante lobortis, commodo enim ut, sollicitudin dolor. Maecenas at vehicula dui. Duis placerat lacus sed odio scelerisque, eget vulputate lorem aliquam. Nullam consequat fringilla leo, in pellentesque ex posuere nec. Sed nec urna dolor. Proin non suscipit mi. Integer varius, lorem non viverra convallis, nulla nisi eleifend lorem, vitae volutpat metus ex sed elit. Donec nec erat arcu. Nunc lobortis venenatis tortor, nec finibus nisi cursus id.</string>
+    <string name="people_fragment">People Fragment</string>
+    <string name="person_detail_fragment">Person Details Fragment</string>
+    <string name="people">People</string>
 </resources>

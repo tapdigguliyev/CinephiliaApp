@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         navHostFragment.findNavController().addOnDestinationChangedListener {_, destination, _ ->
             when(destination.id) {
-                R.id.moviesFragment, R.id.seriesFragment -> supportActionBar?.apply {
+                R.id.moviesFragment, R.id.seriesFragment, R.id.peopleFragment -> supportActionBar?.apply {
                     setDisplayHomeAsUpEnabled(false)
                     supportActionBar?.title = this@MainActivity.getString(R.string.app_name)
                 }
