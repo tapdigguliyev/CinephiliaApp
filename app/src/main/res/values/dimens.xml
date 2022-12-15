@@ -2,4 +2,5 @@
 <resources>
     <dimen name="media_item_height">200dp</dimen>
     <dimen name="media_item_width">250dp</dimen>
+    <dimen name="person_item_height">200dp</dimen>
 </resources>

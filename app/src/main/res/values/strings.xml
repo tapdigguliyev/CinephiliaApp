@@ -7,4 +7,5 @@
     <string name="people_fragment">People Fragment</string>
     <string name="person_detail_fragment">Person Details Fragment</string>
     <string name="people">People</string>
+    <string name="media_person_image">Media Person Image</string>
 </resources>
