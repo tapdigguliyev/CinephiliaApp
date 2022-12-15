@@ -14,10 +14,10 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.DetailGenre
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
-import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SeriesGenre
-import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSeries
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSerie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
@@ -33,7 +33,7 @@ fun MoviesResponse.toMedias() =
         total_results = total_results
     )
 
-fun Result.toMedia() =
+fun ResultMovie.toMedia() =
     Media(
         id = id,
         title = title,
@@ -54,7 +54,7 @@ fun SeriesResponse.toMedias() =
         total_results = total_results
     )
 
-fun ResultSeries.toMedia() =
+fun ResultSerie.toMedia() =
     Media(
         id = id,
         title = name,

@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.liveData
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
-import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.Result
+import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
+import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSerie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
@@ -29,31 +31,25 @@ class MainViewModel @Inject constructor(
     private val _topRatedMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
     val topRatedMovies: LiveData<Resource<MoviesResponse>> = _topRatedMovies
 
-    private val _popularMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
-    val popularMovies: LiveData<Resource<MoviesResponse>> = _popularMovies
-
     private val _topRatedTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
     val topRatedTVShows: LiveData<Resource<SeriesResponse>> = _topRatedTVShows
-
-    private val _popularTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
-    val popularTVShows: LiveData<Resource<SeriesResponse>> = _popularTVShows
 
     var movieGenres: MutableList<Genre> = mutableListOf()
     var tVShowGenres: MutableList<Genre> = mutableListOf()
 
-    val errorMessage = MutableLiveData<String>()
-
     init {
         getTopRatedMovies()
-        getPopularMovies()
         getMovieGenres()
         getTVShowGenres()
         getTopRatedTVShows()
-        getPopularTVShows()
     }
 
-    fun getMovieList(): LiveData<PagingData<Result>> {
-        return mediaRepository.getAllMovies().cachedIn(viewModelScope)
+    suspend fun getPopularMovieList(): LiveData<PagingData<ResultMovie>> {
+        return mediaRepository.providePopularMovies().liveData.cachedIn(viewModelScope)
+    }
+
+    suspend fun getPopularTVShowsList(): LiveData<PagingData<ResultSerie>> {
+        return mediaRepository.providePopularTVShows().cachedIn(viewModelScope)
     }
 
     private fun getTopRatedMovies() = viewModelScope.launch {
@@ -73,23 +69,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getPopularMovies() = viewModelScope.launch {
-        _popularMovies.postValue(Resource.Loading())
-        try {
-            if (networkStatusChecker.hasInternetConnection()) {
-                val response = mediaRepository.providePopularMovies()
-                _popularMovies.postValue(handleMoviesResponse(response))
-            } else {
-                _popularMovies.postValue(Resource.Error("No internet connection"))
-            }
-        } catch (error: Throwable) {
-            when(error) {
-                is IOException -> _popularMovies.postValue(Resource.Error("Network Failure"))
-                else -> _popularMovies.postValue(Resource.Error("Conversion Error"))
-            }
-        }
-    }
-
     private fun getTopRatedTVShows() = viewModelScope.launch {
         _topRatedTVShows.postValue(Resource.Loading())
         try {
@@ -103,23 +82,6 @@ class MainViewModel @Inject constructor(
             when(error) {
                 is IOException -> _topRatedTVShows.postValue(Resource.Error("Network Failure"))
                 else -> _topRatedTVShows.postValue(Resource.Error("Conversion Error"))
-            }
-        }
-    }
-
-    private fun getPopularTVShows() = viewModelScope.launch {
-        _popularTVShows.postValue(Resource.Loading())
-        try {
-            if (networkStatusChecker.hasInternetConnection()) {
-                val response = mediaRepository.providePopularTVShows()
-                _popularTVShows.postValue(handleSeriesResponse(response))
-            } else {
-                _popularTVShows.postValue(Resource.Error("No internet connection"))
-            }
-        } catch (error: Throwable) {
-            when(error) {
-                is IOException -> _popularTVShows.postValue(Resource.Error("Network Failure"))
-                else -> _popularTVShows.postValue(Resource.Error("Conversion Error"))
             }
         }
     }

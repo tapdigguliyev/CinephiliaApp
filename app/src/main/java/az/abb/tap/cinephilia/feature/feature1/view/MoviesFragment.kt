@@ -15,6 +15,7 @@ import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.base.BaseAdapter
+import az.abb.tap.cinephilia.base.BasePagingAdapter
 import az.abb.tap.cinephilia.databinding.FragmentMoviesBinding
 import az.abb.tap.cinephilia.databinding.ItemMediaBinding
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
@@ -31,8 +32,9 @@ import javax.inject.Inject
 class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
     private val topRatedMoviesAdapter by lazy { BaseAdapter<Media>() }
-    private val moviesAdapter by lazy { BaseAdapter<Media>() }
+    private val popularMoviesAdapter by lazy { BasePagingAdapter<Media>() }
     private val viewModel: MainViewModel by viewModels()
+
     @Inject
     lateinit var glide: RequestManager
 
@@ -48,7 +50,7 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupTopRatedMoviesRecyclerView()
-        setupMoviesRecyclerView()
+        setupPopularMoviesRecyclerView()
         setupTopRatedMoviesAdapter()
         setupMoviesAdapter()
 
@@ -57,23 +59,12 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observeTopRatedMovies() {
-        lifecycleScope.launch {
-            viewModel.getMovieList().observe(viewLifecycleOwner) {
-                it?.let {
-                    val mediaPagingData = it.map { result ->
-                        result.toMedia()
-                    }
-                    topRatedMoviesAdapter.submitData(lifecycle, mediaPagingData)
-                }
-            }
-        }
         viewModel.topRatedMovies.observe(viewLifecycleOwner) { responseResource ->
             when (responseResource) {
                 is Resource.Success -> {
                     binding.pbTopRatedMovies.makeInvisible()
                     responseResource.data?.let { response ->
-//                        topRatedMoviesAdapter.submitData(lifecycle, response.toMedias().movies.toMutableList())
-//                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -92,25 +83,13 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observePopularMovies() {
-        viewModel.popularMovies.observe(viewLifecycleOwner) { responseResource ->
-            when (responseResource) {
-                is Resource.Success -> {
-                    binding.pbPopularMovies.makeInvisible()
-                    responseResource.data?.let { response ->
-//                        moviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+        lifecycleScope.launch {
+            viewModel.getPopularMovieList().observe(viewLifecycleOwner) {
+                it?.let {
+                    val mediaPagingData = it.map { result ->
+                        result.toMedia()
                     }
-                }
-
-                is Resource.Error -> {
-                    binding.pbPopularMovies.makeInvisible()
-                    responseResource.message?.let { message ->
-                        Log.e(TAG, "An error occurred: $message")
-                        Toast.makeText(requireContext(), "An error occurred: $message", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                is Resource.Loading -> {
-                    binding.pbPopularMovies.makeVisible()
+                    popularMoviesAdapter.submitData(lifecycle, mediaPagingData)
                 }
             }
         }
@@ -148,35 +127,14 @@ class MoviesFragment : Fragment() {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, topRatedMovie.idBundle("MOVIES"))
             }
         }
-
-        topRatedMoviesAdapter.addLoadStateListener { loadState ->
-            // show empty list
-            if (loadState.refresh is LoadState.Loading ||
-                loadState.append is LoadState.Loading)
-                binding.pbTopRatedMovies.makeVisible()
-            else {
-                binding.pbTopRatedMovies.makeInvisible()
-                // If we have an error, show a toast
-                val errorState = when {
-                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
-                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
-                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
-                    else -> null
-                }
-                errorState?.let {
-                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
-                }
-
-            }
-        }
     }
 
     private fun setupMoviesAdapter() {
-        moviesAdapter.expressionOnCreateViewHolder = { viewGroup ->
+        popularMoviesAdapter.expressionOnCreateViewHolder = { viewGroup ->
             ItemMediaBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         }
 
-        moviesAdapter.expressionOnBindViewHolder = { popularMovie, viewBinding ->
+        popularMoviesAdapter.expressionOnBindViewHolder = { popularMovie, viewBinding ->
             val view = viewBinding as ItemMediaBinding
 
             view.tvMediaName.text = popularMovie.title
@@ -203,11 +161,29 @@ class MoviesFragment : Fragment() {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, popularMovie.idBundle("MOVIES"))
             }
         }
+
+        popularMoviesAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Loading ||
+                loadState.append is LoadState.Loading)
+                binding.pbPopularMovies.makeVisible()
+            else {
+                binding.pbPopularMovies.makeInvisible()
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
-    private fun setupMoviesRecyclerView() {
-        binding.rvMovies.apply {
-            adapter = moviesAdapter
+    private fun setupPopularMoviesRecyclerView() {
+        binding.rvPopularMovies.apply {
+            adapter = popularMoviesAdapter
             layoutManager = LinearLayoutManager(requireContext())
             snapToChildView()
         }

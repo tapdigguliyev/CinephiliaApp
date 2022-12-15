@@ -8,10 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
 import az.abb.tap.cinephilia.base.BaseAdapter
+import az.abb.tap.cinephilia.base.BasePagingAdapter
 import az.abb.tap.cinephilia.databinding.FragmentSeriesBinding
 import az.abb.tap.cinephilia.databinding.ItemMediaBinding
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
@@ -28,7 +32,7 @@ import javax.inject.Inject
 class SeriesFragment : Fragment() {
     private lateinit var binding: FragmentSeriesBinding
     private val topRatedSeriesAdapter by lazy { BaseAdapter<Media>() }
-    private val popularSeriesAdapter by lazy { BaseAdapter<Media>() }
+    private val popularSeriesAdapter by lazy { BasePagingAdapter<Media>() }
     private val viewModel: MainViewModel by viewModels()
 
     @Inject
@@ -56,7 +60,7 @@ class SeriesFragment : Fragment() {
                 is Resource.Success -> {
                     binding.pbTopRatedTVShows.makeInvisible()
                     responseResource.data?.let { response ->
-//                        topRatedSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+                        topRatedSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
                     }
                 }
 
@@ -75,25 +79,13 @@ class SeriesFragment : Fragment() {
     }
 
     private fun observePopularTVShows() {
-        viewModel.popularTVShows.observe(viewLifecycleOwner) { responseResource ->
-            when (responseResource) {
-                is Resource.Success -> {
-                    binding.pbPopularTVShows.makeInvisible()
-                    responseResource.data?.let { response ->
-//                        popularSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+        lifecycleScope.launch {
+            viewModel.getPopularTVShowsList().observe(viewLifecycleOwner) {
+                it?.let {
+                    val mediaPagingData = it.map { resultSeries ->
+                        resultSeries.toMedia()
                     }
-                }
-
-                is Resource.Error -> {
-                    binding.pbPopularTVShows.makeInvisible()
-                    responseResource.message?.let { message ->
-                        Log.e(MoviesFragment.TAG, "An error occurred: $message")
-                        Toast.makeText(requireContext(), "An error occurred: $message", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                is Resource.Loading -> {
-                    binding.pbPopularTVShows.makeVisible()
+                    popularSeriesAdapter.submitData(lifecycle, mediaPagingData)
                 }
             }
         }
@@ -163,6 +155,24 @@ class SeriesFragment : Fragment() {
 
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, popularTVShow.idBundle("SERIES"))
+            }
+        }
+
+        popularSeriesAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Loading ||
+                loadState.append is LoadState.Loading)
+                binding.pbPopularTVShows.makeVisible()
+            else {
+                binding.pbPopularTVShows.makeInvisible()
+                val errorState = when {
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                errorState?.let {
+                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
