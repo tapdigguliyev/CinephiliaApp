@@ -4,18 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/secondaryColor"
     tools:context=".feature.feature1.view.SeriesFragment">
 
     <LinearLayout
         android:id="@+id/llTopRatedTVShows"
         android:layout_width="match_parent"
         android:layout_height="208dp"
+        android:background="@color/primaryLightColor"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTopRatedTVShows"
-            android:layout_width="match_parent"
+            android:layout_width="350dp"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_media" />
 
