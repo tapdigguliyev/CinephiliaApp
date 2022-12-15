@@ -4,9 +4,13 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -195,3 +199,21 @@ fun Media.idBundle(mediaType: String) =
 
 fun Double.outOfTen() =
     toString() + "/10"
+
+fun CombinedLoadStates.setup(context: Context, progressBar: ProgressBar) {
+    if (this.refresh is LoadState.Loading ||
+        this.append is LoadState.Loading)
+        progressBar.makeVisible()
+    else {
+        progressBar.makeInvisible()
+        val errorState = when {
+            this.append is LoadState.Error -> this.append as LoadState.Error
+            this.prepend is LoadState.Error ->  this.prepend as LoadState.Error
+            this.refresh is LoadState.Error -> this.refresh as LoadState.Error
+            else -> null
+        }
+        errorState?.let {
+            Toast.makeText(context, it.error.toString(), Toast.LENGTH_LONG).show()
+        }
+    }
+}

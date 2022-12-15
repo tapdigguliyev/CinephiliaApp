@@ -167,21 +167,7 @@ class MoviesFragment : Fragment() {
         }
 
         popularMoviesAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.Loading ||
-                loadState.append is LoadState.Loading)
-                binding.pbPopularMovies.makeVisible()
-            else {
-                binding.pbPopularMovies.makeInvisible()
-                val errorState = when {
-                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
-                    loadState.prepend is LoadState.Error ->  loadState.prepend as LoadState.Error
-                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
-                    else -> null
-                }
-                errorState?.let {
-                    Toast.makeText(requireContext(), it.error.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
+            loadState.setup(requireContext(), binding.pbPopularMovies)
         }
     }
 
