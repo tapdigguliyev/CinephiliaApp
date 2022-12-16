@@ -101,7 +101,9 @@ class MediaDetailsFragment : Fragment() {
 
                     responseResource.data?.let { tvShowCreditsResponse ->
                         val tvShowCredits = tvShowCreditsResponse.cast.map { it.toMediaCast() }
-                        mediaCreditsAdapter.differ.submitList(tvShowCredits)
+
+                        if (tvShowCredits.isNotEmpty()) mediaCreditsAdapter.differ.submitList(tvShowCredits)
+                        else binding.llMediaCredits.makeGone()
                     }
                 }
                 is Resource.Error -> {
@@ -189,8 +191,10 @@ class MediaDetailsFragment : Fragment() {
         mediaCreditsAdapter.expressionOnBindViewHolder = { mediaCast, viewBinding ->
             val view = viewBinding as ItemMediaPersonBinding
 
+            if(mediaCast.characterName.isNullOrBlank()) view.llCharacterInfo.makeGone()
+
             view.tvMediaPersonName.text = mediaCast.name
-            view.tvMediaCharacterName.text = mediaCast.characterName ?: "No character name"
+            view.tvMediaCharacterName.text = mediaCast.characterName
             if (mediaCast.profilePath != null) {
                 glide.load(mediaCast.profilePath).into(view.ivMediaPerson)
             } else {

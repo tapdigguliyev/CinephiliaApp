@@ -16,9 +16,9 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.trendingpeopleresponse.Resu
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
+import az.abb.tap.cinephilia.utility.handleResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
@@ -61,7 +61,7 @@ class MainViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideTopRatedMovies()
-                _topRatedMovies.postValue(handleMoviesResponse(response))
+                _topRatedMovies.postValue(handleResponse(response))
             } else {
                 _topRatedMovies.postValue(Resource.Error("No internet connection"))
             }
@@ -78,7 +78,7 @@ class MainViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideTopRatedTVShows()
-                _topRatedTVShows.postValue(handleSeriesResponse(response))
+                _topRatedTVShows.postValue(handleResponse(response))
             } else {
                 _topRatedTVShows.postValue(Resource.Error("No internet connection"))
             }
@@ -95,7 +95,7 @@ class MainViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideMovieGenres()
-                _movieGenres.postValue(handleGenresResponse(response))
+                _movieGenres.postValue(handleResponse(response))
             } else {
                 _movieGenres.postValue(Resource.Error("No internet connection"))
             }
@@ -112,7 +112,7 @@ class MainViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideTVShowGenres()
-                _tvShowGenres.postValue(handleGenresResponse(response))
+                _tvShowGenres.postValue(handleResponse(response))
             } else {
                 _tvShowGenres.postValue(Resource.Error("No internet connection"))
             }
@@ -122,32 +122,5 @@ class MainViewModel @Inject constructor(
                 else -> _tvShowGenres.postValue(Resource.Error("Conversion Error"))
             }
         }
-    }
-
-    private fun handleMoviesResponse(response: Response<MoviesResponse>): Resource<MoviesResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleSeriesResponse(response: Response<SeriesResponse>): Resource<SeriesResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleGenresResponse(response: Response<GenresResponse>): Resource<GenresResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
     }
 }

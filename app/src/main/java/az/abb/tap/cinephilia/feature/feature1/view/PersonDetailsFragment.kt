@@ -96,7 +96,9 @@ class PersonDetailsFragment : Fragment() {
 
                     responseResource.data?.let { personMovieCreditsResponse ->
                         val personMovies = personMovieCreditsResponse.cast.map { it.toPersonMediaCast() }
-                        personMoviesAdapter.differ.submitList(personMovies)
+
+                        if (personMovies.isNotEmpty()) personMoviesAdapter.differ.submitList(personMovies)
+                        else binding.llPersonMovieDetails.makeGone()
                     }
                 }
                 is Resource.Error -> {
@@ -124,7 +126,9 @@ class PersonDetailsFragment : Fragment() {
 
                     responseResource.data?.let { personTVShowCreditsResponse ->
                         val personTVShows = personTVShowCreditsResponse.cast.map { it.toPersonMediaCast() }
-                        personTVShowsAdapter.differ.submitList(personTVShows)
+
+                        if (personTVShows.isNotEmpty()) personTVShowsAdapter.differ.submitList(personTVShows)
+                        else binding.llPersonTVShowDetails.makeGone()
                     }
                 }
                 is Resource.Error -> {
@@ -151,6 +155,8 @@ class PersonDetailsFragment : Fragment() {
 
         personMoviesAdapter.expressionOnBindViewHolder = { personMediaCast, viewBinding ->
             val view = viewBinding as ItemPersonMediaBinding
+
+            if (personMediaCast.character.isBlank()) view.llPersonCharacterInfo.makeGone()
 
             view.tvPersonMediaName.text = personMediaCast.mediaName
             view.tvPersonMediaRating.text = personMediaCast.voteAverage.outOfTen()
@@ -190,6 +196,8 @@ class PersonDetailsFragment : Fragment() {
 
         personTVShowsAdapter.expressionOnBindViewHolder = { personMediaCast, viewBinding ->
             val view = viewBinding as ItemPersonMediaBinding
+
+            if (personMediaCast.character.isBlank()) view.llPersonCharacterInfo.makeGone()
 
             view.tvPersonMediaName.text = personMediaCast.mediaName
             view.tvPersonMediaRating.text = personMediaCast.voteAverage.outOfTen()
@@ -276,11 +284,15 @@ class PersonDetailsFragment : Fragment() {
         if (person.profilePath != null) glide.load(person.profilePath).into(binding.ivPersonDetail)
         else binding.ivPersonDetail.setImageResource(R.drawable.ic_baseline_person_24)
 
-        if(person.biography.isEmpty()) binding.tvBiography.makeInvisible()
+        if (person.biography.isBlank()) binding.tvBiography.makeGone()
+        if (person.birthday.isNullOrBlank()) binding.tvPersonBirthday.makeGone()
+        if (person.deathDay.isNullOrBlank()) binding.tvPersonDeathDay.makeGone()
+        if (person.gender == 0) binding.tvPersonGender.makeGone()
+        if (person.placeOfBirth.isNullOrBlank()) binding.tvPersonBirthPlace.makeGone()
 
         binding.tvPersonDetailName.text = person.name
-        binding.tvPersonBirthday.text = person.birthday ?: ""
-        binding.tvPersonDeathDay.text = person.deathDay ?: ""
+        binding.tvPersonBirthday.text = person.birthday
+        binding.tvPersonDeathDay.text = person.deathDay
         binding.tvPersonDetailBiography.text = person.biography
         binding.tvPersonKnownFor.text = person.knownForDepartment.setAsKnownFor()
         binding.tvPersonPopularity.text = person.popularity.getBeautifulString()

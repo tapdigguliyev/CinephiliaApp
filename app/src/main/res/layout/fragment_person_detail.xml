@@ -177,36 +177,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/svPersonMainDetails">
 
-        <TextView
-            android:id="@+id/tvPersonMovies"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:layout_marginStart="16dp"
-            android:text="@string/movies"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPersonMovies"
+        <LinearLayout
+            android:id="@+id/llPersonMovieDetails"
             android:layout_width="match_parent"
-            android:layout_height="106dp"
-            tools:listitem="@layout/item_person_media" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvPersonTvShows"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/tv_shows"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvPersonMovies"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/movies"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPersonTVShows"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPersonMovies"
+                android:layout_width="match_parent"
+                android:layout_height="106dp"
+                tools:listitem="@layout/item_person_media" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llPersonTVShowDetails"
             android:layout_width="match_parent"
-            android:layout_height="106dp"
-            tools:listitem="@layout/item_person_media" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPersonTvShows"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tv_shows"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPersonTVShows"
+                android:layout_width="match_parent"
+                android:layout_height="106dp"
+                tools:listitem="@layout/item_person_media" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -56,6 +56,10 @@ fun View.makeInvisible() {
     this.visibility = View.INVISIBLE
 }
 
+fun View.makeGone() {
+    this.visibility = View.GONE
+}
+
 fun RecyclerView.snapToChildView() {
     LinearSnapHelper().attachToRecyclerView(this)
 }
@@ -149,7 +153,7 @@ fun Int.setAsGenderString() =
     when(this){
         1 -> "Female"
         2 -> "Male"
-        else -> "Unknown"
+        else -> ""
     }
 
 fun Double.getBeautifulString() =

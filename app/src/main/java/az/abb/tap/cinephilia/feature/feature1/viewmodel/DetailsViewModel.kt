@@ -14,9 +14,9 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse.TVSho
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
+import az.abb.tap.cinephilia.utility.handleResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
@@ -52,7 +52,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.providePersonMovieCredits(personId)
-                _personMovieCredits.postValue(handlePersonMovieCreditsResponse(response))
+                _personMovieCredits.postValue(handleResponse(response))
             } else {
                 _personMovieCredits.postValue(Resource.Error("No internet connection"))
             }
@@ -69,7 +69,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.providePersonTVShowCredits(personId)
-                _personTVShowCredits.postValue(handlePersonTVShowCreditsResponse(response))
+                _personTVShowCredits.postValue(handleResponse(response))
             } else {
                 _personTVShowCredits.postValue(Resource.Error("No internet connection"))
             }
@@ -86,7 +86,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideMovieCredits(movieId)
-                _movieCredits.postValue(handleMovieCreditsResponse(response))
+                _movieCredits.postValue(handleResponse(response))
             } else {
                 _movieCredits.postValue(Resource.Error("No internet connection"))
             }
@@ -103,7 +103,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideTVShowCredits(tvShowId)
-                _tvShowCredits.postValue(handleTVShowCreditsResponse(response))
+                _tvShowCredits.postValue(handleResponse(response))
             } else {
                 _tvShowCredits.postValue(Resource.Error("No internet connection"))
             }
@@ -120,7 +120,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.providePersonDetails(personId)
-                _person.postValue(handlePersonDetailsResponse(response))
+                _person.postValue(handleResponse(response))
             } else {
                 _person.postValue(Resource.Error("No internet connection"))
             }
@@ -137,7 +137,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideMovieDetails(movieId)
-                _movie.postValue(handleMovieDetailsResponse(response))
+                _movie.postValue(handleResponse(response))
             } else {
                 _movie.postValue(Resource.Error("No internet connection"))
             }
@@ -154,7 +154,7 @@ class DetailsViewModel @Inject constructor(
         try {
             if (networkStatusChecker.hasInternetConnection()) {
                 val response = mediaRepository.provideSerieDetails(tvId)
-                _serie.postValue(handleSeriesDetailsResponse(response))
+                _serie.postValue(handleResponse(response))
             } else {
                 _serie.postValue(Resource.Error("No internet connection"))
             }
@@ -164,68 +164,5 @@ class DetailsViewModel @Inject constructor(
                 else -> _serie.postValue(Resource.Error("Conversion Error"))
             }
         }
-    }
-
-    private fun handlePersonMovieCreditsResponse(response: Response<PersonMovieCreditsResponse>): Resource<PersonMovieCreditsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handlePersonTVShowCreditsResponse(response: Response<PersonTVShowCreditsResponse>): Resource<PersonTVShowCreditsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleMovieCreditsResponse(response: Response<MovieCreditsResponse>): Resource<MovieCreditsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleTVShowCreditsResponse(response: Response<TVShowCreditsResponse>): Resource<TVShowCreditsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handlePersonDetailsResponse(response: Response<PersonDetailsResponse>): Resource<PersonDetailsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleMovieDetailsResponse(response: Response<MovieDetailsResponse>): Resource<MovieDetailsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-
-    private fun handleSeriesDetailsResponse(response: Response<SerieDetailsResponse>): Resource<SerieDetailsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
     }
 }

@@ -23,47 +23,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/llPersonMedia"
+        <ScrollView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="top"
-            android:orientation="vertical"
-            android:paddingStart="3dp"
-            android:paddingEnd="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivMediaPerson"
             app:layout_constraintTop_toTopOf="@id/ivMediaPerson">
 
-            <TextView
-                android:id="@+id/tvMediaPersonName"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/llPersonMedia"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:paddingBottom="4dp"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="Person Name" />
+                android:gravity="top"
+                android:orientation="vertical"
+                android:paddingStart="3dp"
+                android:paddingEnd="1dp">
 
-            <TextView
-                android:id="@+id/tvCharacterName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/character"
-                android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvMediaPersonName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Person Name" />
 
-            <TextView
-                android:id="@+id/tvMediaCharacterName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="Character Name" />
+                <LinearLayout
+                    android:id="@+id/llCharacterInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvCharacterName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/character"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvMediaCharacterName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Character Name" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
