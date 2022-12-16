@@ -9,8 +9,10 @@ import androidx.paging.cachedIn
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenresResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
+import az.abb.tap.cinephilia.data.network.tmdb.model.popularpeopleresponse.ResultPopularPeople
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSerie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.trendingpeopleresponse.ResultTrendingPeople
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
@@ -37,6 +39,14 @@ class MainViewModel @Inject constructor(
 
     private val _tvShowGenres: MutableLiveData<Resource<GenresResponse>> = MutableLiveData()
     val tvShowGenres: LiveData<Resource<GenresResponse>> = _tvShowGenres
+
+    suspend fun getTrendingPeople(): LiveData<PagingData<ResultTrendingPeople>> {
+        return mediaRepository.provideTrendingPeople().cachedIn(viewModelScope)
+    }
+
+    suspend fun getPopularPeople(): LiveData<PagingData<ResultPopularPeople>> {
+        return mediaRepository.providePopularPeople().cachedIn(viewModelScope)
+    }
 
     suspend fun getPopularMovieList(): LiveData<PagingData<ResultMovie>> {
         return mediaRepository.providePopularMovies().cachedIn(viewModelScope)

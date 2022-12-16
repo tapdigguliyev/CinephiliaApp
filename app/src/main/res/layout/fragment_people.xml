@@ -4,17 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/secondaryColor"
     tools:context=".feature.feature1.view.PeopleFragment">
 
     <LinearLayout
-        android:id="@+id/llLatestPerson"
+        android:id="@+id/llTrendingPeople"
         android:layout_width="match_parent"
         android:layout_height="208dp"
+        android:background="@color/primaryLightColor"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="horizontal">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTrendingPeople"
+            android:layout_width="350dp"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_person" />
 
     </LinearLayout>
 
@@ -26,7 +33,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llLatestPerson">
+        app:layout_constraintTop_toBottomOf="@id/llTrendingPeople">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPopularPeople"
@@ -39,12 +46,12 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/pbLatestPerson"
+        android:id="@+id/pbTrendingPeople"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/llLatestPerson"
+        app:layout_constraintBottom_toBottomOf="@id/llTrendingPeople"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />

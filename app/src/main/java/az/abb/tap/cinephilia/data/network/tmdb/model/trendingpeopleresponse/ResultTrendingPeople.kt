@@ -10,5 +10,5 @@ data class ResultTrendingPeople(
     val name: String,
     val original_name: String,
     val popularity: Double,
-    val profile_path: String
+    val profile_path: String?
 )
