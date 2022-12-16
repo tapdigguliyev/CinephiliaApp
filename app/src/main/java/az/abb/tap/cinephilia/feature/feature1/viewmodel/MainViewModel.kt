@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.liveData
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenresResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
@@ -40,7 +39,7 @@ class MainViewModel @Inject constructor(
     val tvShowGenres: LiveData<Resource<GenresResponse>> = _tvShowGenres
 
     suspend fun getPopularMovieList(): LiveData<PagingData<ResultMovie>> {
-        return mediaRepository.providePopularMovies().liveData.cachedIn(viewModelScope)
+        return mediaRepository.providePopularMovies().cachedIn(viewModelScope)
     }
 
     suspend fun getPopularTVShowsList(): LiveData<PagingData<ResultSerie>> {
