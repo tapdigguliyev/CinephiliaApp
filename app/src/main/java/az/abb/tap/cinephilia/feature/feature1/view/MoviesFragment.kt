@@ -145,16 +145,18 @@ class MoviesFragment : Fragment() {
             glide.load(topRatedMovie.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {
-                view.mediaItemCard.assignColors(
-                    requireContext(),
-                    topRatedMovie.imageLink,
-                    glide,
-                    view.tvMediaName,
-                    view.tvMediaYear,
-                    view.tvMediaGenre,
-                    view.tvMediaRating,
-                    view.tvMediaLanguage
-                )
+                topRatedMovie.imageLink?.let {
+                    view.mediaItemCard.assignColors(
+                        requireContext(),
+                        it,
+                        glide,
+                        view.tvMediaName,
+                        view.tvMediaYear,
+                        view.tvMediaGenre,
+                        view.tvMediaRating,
+                        view.tvMediaLanguage
+                    )
+                }
             }
 
             view.root.setOnClickListener {
@@ -179,16 +181,18 @@ class MoviesFragment : Fragment() {
             glide.load(popularMovie.imageLink).into(view.ivMedia)
 
             CoroutineScope(Dispatchers.IO).launch {
-                view.mediaItemCard.assignColors(
-                    requireContext(),
-                    popularMovie.imageLink,
-                    glide,
-                    view.tvMediaName,
-                    view.tvMediaYear,
-                    view.tvMediaGenre,
-                    view.tvMediaRating,
-                    view.tvMediaLanguage
-                )
+                popularMovie.imageLink?.let {
+                    view.mediaItemCard.assignColors(
+                        requireContext(),
+                        it,
+                        glide,
+                        view.tvMediaName,
+                        view.tvMediaYear,
+                        view.tvMediaGenre,
+                        view.tvMediaRating,
+                        view.tvMediaLanguage
+                    )
+                }
             }
 
             view.root.setOnClickListener {

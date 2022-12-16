@@ -7,6 +7,8 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieD
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
 import az.abb.tap.cinephilia.data.network.tmdb.model.persondetailsresponse.PersonDetailsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.personmoviecreditsresponse.PersonMovieCastResult
+import az.abb.tap.cinephilia.data.network.tmdb.model.persontvshowcreditsresponse.PersonTVShowCastResult
 import az.abb.tap.cinephilia.data.network.tmdb.model.popularpeopleresponse.ResultPopularPeople
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SeriesGenre
@@ -21,6 +23,7 @@ import az.abb.tap.cinephilia.feature.feature1.model.mediacast.MediaCast
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.model.person.Person
 import az.abb.tap.cinephilia.feature.feature1.model.persondetails.PersonDetails
+import az.abb.tap.cinephilia.feature.feature1.model.personmediacast.PersonMediaCast
 import az.abb.tap.cinephilia.utility.Constants.IMAGE_BASE_URL
 
 fun MoviesResponse.toMedias() =
@@ -38,7 +41,7 @@ fun ResultMovie.toMedia() =
         originalTitle = original_title,
         genreIds = genre_ids,
         overview = overview,
-        imageLink = String.format(IMAGE_BASE_URL, poster_path),
+        imageLink = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
         releaseDate = release_date,
         language = original_language,
         rating = vote_average
@@ -59,7 +62,7 @@ fun ResultSerie.toMedia() =
         originalTitle = original_name,
         genreIds = genre_ids,
         overview = overview,
-        imageLink = String.format(IMAGE_BASE_URL, poster_path),
+        imageLink = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
         releaseDate = first_air_date,
         language = original_language,
         rating = vote_average
@@ -77,7 +80,7 @@ fun MovieDetailsResponse.toMediaDetails() =
         genres = genres.map { it.toNewGenre() }.toMutableList(),
         original_title = original_title,
         overview = overview,
-        poster_path = String.format(IMAGE_BASE_URL, poster_path),
+        poster_path = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
         release_date = release_date,
         runtime = runtime,
         title = title,
@@ -91,7 +94,7 @@ fun SerieDetailsResponse.toMediaDetails() =
         genres = genres.map { it.toNewGenre() }.toMutableList(),
         original_title = original_name,
         overview = overview,
-        poster_path = String.format(IMAGE_BASE_URL, poster_path),
+        poster_path = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
         release_date = first_air_date,
         runtime = 0,
         title = name,
@@ -159,4 +162,24 @@ fun TVShowCastResult.toMediaCast() =
         characterName = character,
         id = id,
         profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path)
+    )
+
+fun PersonMovieCastResult.toPersonMediaCast() =
+    PersonMediaCast(
+        character = character,
+        id = id,
+        posterPath = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
+        releaseDate = release_date,
+        mediaName = title,
+        voteAverage = vote_average
+    )
+
+fun PersonTVShowCastResult.toPersonMediaCast() =
+    PersonMediaCast(
+        character = character,
+        id = id,
+        posterPath = if (poster_path == null) null else String.format(IMAGE_BASE_URL, poster_path),
+        releaseDate = first_air_date,
+        mediaName = name,
+        voteAverage = vote_average
     )

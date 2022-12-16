@@ -1,6 +1,6 @@
 package az.abb.tap.cinephilia.data.network.tmdb.model.persontvshowcreditsresponse
 
-data class Cast(
+data class PersonTVShowCastResult(
     val adult: Boolean,
     val backdrop_path: String,
     val character: String,
@@ -15,7 +15,7 @@ data class Cast(
     val original_name: String,
     val overview: String,
     val popularity: Double,
-    val poster_path: String,
+    val poster_path: String?,
     val vote_average: Double,
     val vote_count: Int
 )

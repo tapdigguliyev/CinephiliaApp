@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviecreditsresponse.MovieCreditsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.persondetailsresponse.PersonDetailsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.personmoviecreditsresponse.PersonMovieCreditsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.persontvshowcreditsresponse.PersonTVShowCreditsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse.TVShowCreditsResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
@@ -30,14 +32,54 @@ class DetailsViewModel @Inject constructor(
     private val _serie: MutableLiveData<Resource<SerieDetailsResponse>> = MutableLiveData()
     val serie: LiveData<Resource<SerieDetailsResponse>> = _serie
 
-    private val _person: MutableLiveData<Resource<PersonDetailsResponse>> = MutableLiveData()
-    val person: LiveData<Resource<PersonDetailsResponse>> = _person
-
     private val _movieCredits: MutableLiveData<Resource<MovieCreditsResponse>> = MutableLiveData()
     val movieCredits: LiveData<Resource<MovieCreditsResponse>> = _movieCredits
 
     private val _tvShowCredits: MutableLiveData<Resource<TVShowCreditsResponse>> = MutableLiveData()
     val tvShowCredits: LiveData<Resource<TVShowCreditsResponse>> = _tvShowCredits
+
+    private val _person: MutableLiveData<Resource<PersonDetailsResponse>> = MutableLiveData()
+    val person: LiveData<Resource<PersonDetailsResponse>> = _person
+
+    private val _personMovieCredits: MutableLiveData<Resource<PersonMovieCreditsResponse>> = MutableLiveData()
+    val personMovieCredits: LiveData<Resource<PersonMovieCreditsResponse>> = _personMovieCredits
+
+    private val _personTVShowCredits: MutableLiveData<Resource<PersonTVShowCreditsResponse>> = MutableLiveData()
+    val personTVShowCredits: LiveData<Resource<PersonTVShowCreditsResponse>> = _personTVShowCredits
+
+    fun getPersonMovieCredits(personId: Int) = viewModelScope.launch {
+        _personMovieCredits.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.providePersonMovieCredits(personId)
+                _personMovieCredits.postValue(handlePersonMovieCreditsResponse(response))
+            } else {
+                _personMovieCredits.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _personMovieCredits.postValue(Resource.Error("Network Failure"))
+                else -> _personMovieCredits.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
+    fun getPersonTVShowCredits(personId: Int) = viewModelScope.launch {
+        _personTVShowCredits.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.providePersonTVShowCredits(personId)
+                _personTVShowCredits.postValue(handlePersonTVShowCreditsResponse(response))
+            } else {
+                _personTVShowCredits.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _personTVShowCredits.postValue(Resource.Error("Network Failure"))
+                else -> _personTVShowCredits.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
 
     fun getMovieCredits(movieId: Int) = viewModelScope.launch {
         _movieCredits.postValue(Resource.Loading())
@@ -122,6 +164,24 @@ class DetailsViewModel @Inject constructor(
                 else -> _serie.postValue(Resource.Error("Conversion Error"))
             }
         }
+    }
+
+    private fun handlePersonMovieCreditsResponse(response: Response<PersonMovieCreditsResponse>): Resource<PersonMovieCreditsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
+    }
+
+    private fun handlePersonTVShowCreditsResponse(response: Response<PersonTVShowCreditsResponse>): Resource<PersonTVShowCreditsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
     }
 
     private fun handleMovieCreditsResponse(response: Response<MovieCreditsResponse>): Resource<MovieCreditsResponse> {

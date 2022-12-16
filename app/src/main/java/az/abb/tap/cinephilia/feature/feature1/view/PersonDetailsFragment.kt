@@ -11,9 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import az.abb.tap.cinephilia.R
+import az.abb.tap.cinephilia.base.BaseAdapter
 import az.abb.tap.cinephilia.databinding.FragmentPersonDetailBinding
+import az.abb.tap.cinephilia.databinding.ItemPersonMediaBinding
 import az.abb.tap.cinephilia.feature.feature1.model.persondetails.PersonDetails
+import az.abb.tap.cinephilia.feature.feature1.model.personmediacast.PersonMediaCast
 import az.abb.tap.cinephilia.feature.feature1.viewmodel.DetailsViewModel
 import az.abb.tap.cinephilia.utility.*
 import com.bumptech.glide.RequestManager
@@ -28,6 +32,8 @@ class PersonDetailsFragment : Fragment() {
     private lateinit var binding: FragmentPersonDetailBinding
     private val viewModel: DetailsViewModel by viewModels()
     private val args: PersonDetailsFragmentArgs by navArgs()
+    private val personMoviesAdapter by lazy { BaseAdapter<PersonMediaCast>() }
+    private val personTVShowsAdapter by lazy { BaseAdapter<PersonMediaCast>() }
 
     @Inject
     lateinit var glide: RequestManager
@@ -39,8 +45,20 @@ class PersonDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupPersonMoviesRecyclerView()
+        setupPersonTVShowsRecyclerView()
+        setupPersonMoviesAdapter()
+        setupPersonTVShowsAdapter()
 
         viewModel.getPersonDetails(args.personId)
+        viewModel.getPersonMovieCredits(args.personId)
+        viewModel.getPersonTVShowCredits(args.personId)
+        observePersonDetails()
+        observePersonMovies()
+        observePersonTVShows()
+    }
+
+    private fun observePersonDetails() {
         viewModel.person.observe(viewLifecycleOwner) { responseResource ->
             when (responseResource) {
                 is Resource.Success -> {
@@ -70,6 +88,157 @@ class PersonDetailsFragment : Fragment() {
         }
     }
 
+    private fun observePersonMovies() {
+        viewModel.personMovieCredits.observe(viewLifecycleOwner) { responseResource ->
+            when (responseResource) {
+                is Resource.Success -> {
+                    binding.pbPersonDetails.makeInvisible()
+
+                    responseResource.data?.let { personMovieCreditsResponse ->
+                        val personMovies = personMovieCreditsResponse.cast.map { it.toPersonMediaCast() }
+                        personMoviesAdapter.differ.submitList(personMovies)
+                    }
+                }
+                is Resource.Error -> {
+                    binding.pbPersonDetails.makeInvisible()
+                    responseResource.message?.let { message ->
+                        Toast.makeText(
+                            requireContext(),
+                            "An error occurred: $message",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                is Resource.Loading -> {
+                    binding.pbPersonDetails.makeVisible()
+                }
+            }
+        }
+    }
+
+    private fun observePersonTVShows() {
+        viewModel.personTVShowCredits.observe(viewLifecycleOwner) { responseResource ->
+            when (responseResource) {
+                is Resource.Success -> {
+                    binding.pbPersonDetails.makeInvisible()
+
+                    responseResource.data?.let { personTVShowCreditsResponse ->
+                        val personTVShows = personTVShowCreditsResponse.cast.map { it.toPersonMediaCast() }
+                        personTVShowsAdapter.differ.submitList(personTVShows)
+                    }
+                }
+                is Resource.Error -> {
+                    binding.pbPersonDetails.makeInvisible()
+                    responseResource.message?.let { message ->
+                        Toast.makeText(
+                            requireContext(),
+                            "An error occurred: $message",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                is Resource.Loading -> {
+                    binding.pbPersonDetails.makeVisible()
+                }
+            }
+        }
+    }
+
+    private fun setupPersonMoviesAdapter() {
+        personMoviesAdapter.expressionOnCreateViewHolder = { viewGroup ->
+            ItemPersonMediaBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        }
+
+        personMoviesAdapter.expressionOnBindViewHolder = { personMediaCast, viewBinding ->
+            val view = viewBinding as ItemPersonMediaBinding
+
+            view.tvPersonMediaName.text = personMediaCast.mediaName
+            view.tvPersonMediaRating.text = personMediaCast.voteAverage.outOfTen()
+            view.tvPersonMediaReleaseDate.text = personMediaCast.releaseDate.getYearFromDate()
+            view.tvPersonCharacterName.text = personMediaCast.character
+            if (personMediaCast.posterPath != null) {
+                glide.load(personMediaCast.posterPath).into(view.ivPersonMedia)
+            } else {
+                view.ivPersonMedia.setImageResource(R.drawable.ic_baseline_perm_media_24)
+            }
+
+            CoroutineScope(Dispatchers.IO).launch {
+                personMediaCast.posterPath?.let {
+                    view.personMediaCard.assignColors(
+                        requireContext(),
+                        it,
+                        glide,
+                        view.tvPersonMediaName,
+                        view.tvPersonMediaRating,
+                        view.tvPersonMediaReleaseDate,
+                        view.tvAs,
+                        view.tvPersonCharacterName
+                    )
+                }
+            }
+
+            view.root.setOnClickListener {
+                findNavController().navigate(R.id.action_personDetailFragment_to_detailsFragment, personMediaCast.idBundle("MOVIES"))
+            }
+        }
+    }
+
+    private fun setupPersonTVShowsAdapter() {
+        personTVShowsAdapter.expressionOnCreateViewHolder = { viewGroup ->
+            ItemPersonMediaBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        }
+
+        personTVShowsAdapter.expressionOnBindViewHolder = { personMediaCast, viewBinding ->
+            val view = viewBinding as ItemPersonMediaBinding
+
+            view.tvPersonMediaName.text = personMediaCast.mediaName
+            view.tvPersonMediaRating.text = personMediaCast.voteAverage.outOfTen()
+            view.tvPersonMediaReleaseDate.text = personMediaCast.releaseDate.getYearFromDate()
+            view.tvPersonCharacterName.text = personMediaCast.character
+            if (personMediaCast.posterPath != null) {
+                glide.load(personMediaCast.posterPath).into(view.ivPersonMedia)
+            } else {
+                view.ivPersonMedia.setImageResource(R.drawable.ic_baseline_perm_media_24)
+            }
+
+            CoroutineScope(Dispatchers.IO).launch {
+                personMediaCast.posterPath?.let {
+                    view.personMediaCard.assignColors(
+                        requireContext(),
+                        it,
+                        glide,
+                        view.tvPersonMediaName,
+                        view.tvPersonMediaRating,
+                        view.tvPersonMediaReleaseDate,
+                        view.tvAs,
+                        view.tvPersonCharacterName
+                    )
+                }
+            }
+
+            view.root.setOnClickListener {
+                findNavController().navigate(R.id.action_personDetailFragment_to_detailsFragment, personMediaCast.idBundle("SERIES"))
+            }
+        }
+    }
+
+
+    private fun setupPersonMoviesRecyclerView() {
+        binding.rvPersonMovies.apply {
+            adapter = personMoviesAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            snapToChildView()
+        }
+    }
+
+    private fun setupPersonTVShowsRecyclerView() {
+        binding.rvPersonTVShows.apply {
+            adapter = personTVShowsAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            snapToChildView()
+        }
+    }
+
     private fun setToolbar(person: PersonDetails) {
         (activity as AppCompatActivity).apply {
             val toolbar = this.findViewById<Toolbar>(R.id.toolbar)
@@ -84,7 +253,7 @@ class PersonDetailsFragment : Fragment() {
 
     private fun setColors(person: PersonDetails) {
         person.profilePath?.let {
-            binding.svPersonMainDetails.assignColors(
+            binding.personDetailsBase.assignColors(
                 requireContext(),
                 it,
                 glide,
@@ -96,7 +265,9 @@ class PersonDetailsFragment : Fragment() {
                 binding.tvPersonPopularity,
                 binding.tvPersonGender,
                 binding.tvPersonBirthPlace,
-                binding.tvBiography
+                binding.tvBiography,
+                binding.tvPersonMovies,
+                binding.tvPersonTvShows
             )
         }
     }

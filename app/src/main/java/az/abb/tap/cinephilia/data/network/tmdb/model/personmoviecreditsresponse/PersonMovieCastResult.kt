@@ -1,6 +1,6 @@
 package az.abb.tap.cinephilia.data.network.tmdb.model.personmoviecreditsresponse
 
-data class Cast(
+data class PersonMovieCastResult(
     val adult: Boolean,
     val backdrop_path: String,
     val character: String,
@@ -12,7 +12,7 @@ data class Cast(
     val original_title: String,
     val overview: String,
     val popularity: Double,
-    val poster_path: String,
+    val poster_path: String?,
     val release_date: String,
     val title: String,
     val video: Boolean,

@@ -238,28 +238,36 @@ class MediaDetailsFragment : Fragment() {
     }
 
     private fun setColors(media: MediaDetails) {
-        binding.mediaDetailsBase.assignColors(
-            requireContext(),
-            media.poster_path,
-            glide,
-            binding.tvMovieName,
-            binding.tvMovieOriginalTitle,
-            binding.tvMovieGenres,
-            binding.tvMovieYear,
-            binding.tvMovieDescription,
-            binding.tvCast,
-            binding.tvMovieLanguage,
-            binding.tvMovieRating
-        )
+        media.poster_path?.let {
+            binding.mediaDetailsBase.assignColors(
+                requireContext(),
+                it,
+                glide,
+                binding.tvMovieName,
+                binding.tvMovieOriginalTitle,
+                binding.tvMovieGenres,
+                binding.tvMovieYear,
+                binding.tvMovieDescription,
+                binding.tvCast,
+                binding.tvMovieLanguage,
+                binding.tvMovieRating
+            )
+        }
     }
 
     private fun setViews(media: MediaDetails) {
-        glide.load(media.poster_path).into(binding.ivMovie)
+        if (media.poster_path != null) {
+            glide.load(media.poster_path).into(binding.ivMovie)
+        }
+        else {
+            binding.ivMovie.setImageResource(R.drawable.ic_baseline_perm_media_24)
+        }
+
         binding.tvMovieName.text = media.title
         binding.tvMovieOriginalTitle.text = media.original_title
         binding.tvMovieGenres.text = media.getGenreNames().toStr()
         binding.tvMovieYear.text = media.release_date.getYearFromDate()
-        binding.tvMovieDescription.text = media.overview
+        binding.tvMovieDescription.text = media.overview ?: ""
         binding.tvMovieLanguage.text = media.language
         binding.tvMovieRating.text = media.vote_average.outOfTen()
     }

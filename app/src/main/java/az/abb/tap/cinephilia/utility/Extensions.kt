@@ -20,6 +20,7 @@ import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.model.mediacast.MediaCast
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.model.person.Person
+import az.abb.tap.cinephilia.feature.feature1.model.personmediacast.PersonMediaCast
 import com.bumptech.glide.RequestManager
 
 fun List<String>.toStr(): String {
@@ -112,6 +113,12 @@ fun Person.idBundle() =
 fun MediaCast.idBundle() =
     Bundle().apply {
         putInt("personId", id)
+    }
+
+fun PersonMediaCast.idBundle(mediaType: String) =
+    Bundle().apply {
+        putInt("mediaId", id)
+        putString("mediaType", mediaType)
     }
 
 fun Double.outOfTen() =
