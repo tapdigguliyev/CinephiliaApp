@@ -5,6 +5,7 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.Detail
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.ResultMovie
+import az.abb.tap.cinephilia.data.network.tmdb.model.persondetailsresponse.PersonDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.popularpeopleresponse.ResultPopularPeople
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SeriesGenre
@@ -16,6 +17,7 @@ import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.model.media.Medias
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.model.person.Person
+import az.abb.tap.cinephilia.feature.feature1.model.persondetails.PersonDetails
 import az.abb.tap.cinephilia.utility.Constants.IMAGE_BASE_URL
 
 fun MoviesResponse.toMedias() =
@@ -122,4 +124,18 @@ fun ResultPopularPeople.toPerson() =
         knownForDepartment = known_for_department,
         profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path),
         popularity = popularity
+    )
+
+fun PersonDetailsResponse.toPersonDetails() =
+    PersonDetails(
+        biography = biography,
+        birthday = birthday,
+        deathDay = deathday,
+        gender = gender,
+        id = id,
+        knownForDepartment = known_for_department,
+        name = name,
+        placeOfBirth = place_of_birth,
+        popularity = popularity,
+        profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path)
     )

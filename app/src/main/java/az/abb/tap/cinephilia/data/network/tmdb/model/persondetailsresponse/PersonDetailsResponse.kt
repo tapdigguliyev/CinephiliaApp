@@ -5,7 +5,7 @@ data class PersonDetailsResponse(
     val also_known_as: List<String>,
     val biography: String,
     val birthday: String,
-    val deathday: Any,
+    val deathday: String?,
     val gender: Int,
     val homepage: Any,
     val id: Int,
@@ -14,5 +14,5 @@ data class PersonDetailsResponse(
     val name: String,
     val place_of_birth: String,
     val popularity: Double,
-    val profile_path: String
+    val profile_path: String?
 )

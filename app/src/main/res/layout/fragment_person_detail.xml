@@ -6,15 +6,166 @@
     android:layout_height="match_parent"
     tools:context=".feature.feature1.view.PersonDetailsFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/person_detail_fragment"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+    <ScrollView
+        android:id="@+id/svPersonMainDetails"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/llPersonMediaDetails"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        tools:layout_editor_absoluteX="51dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/ivPersonDetail"
+                android:layout_width="175dp"
+                android:layout_height="200dp"
+                android:contentDescription="@string/person_image"
+                android:src="@drawable/ic_baseline_person_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/llPersonSomeInfo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivPersonDetail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivPersonDetail"
+                app:layout_constraintTop_toTopOf="@id/ivPersonDetail">
+
+                <TextView
+                    android:id="@+id/tvPersonKnownFor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Known for: Acting" />
+
+                <TextView
+                    android:id="@+id/tvPersonPopularity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Popularity: 125" />
+
+                <TextView
+                    android:id="@+id/tvPersonGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Female" />
+
+                <TextView
+                    android:id="@+id/tvPersonBirthPlace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Birth Place" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPersonDetailName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAllCaps="true"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/ivPersonDetail"
+                app:layout_constraintTop_toBottomOf="@id/ivPersonDetail"
+                tools:text="Person Detail Name" />
+
+            <LinearLayout
+                android:id="@+id/llPersonDetailDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/ivPersonDetail"
+                app:layout_constraintTop_toBottomOf="@id/tvPersonDetailName">
+
+                <TextView
+                    android:id="@+id/tvPersonBirthday"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    tools:text="Birthday" />
+
+                <TextView
+                    android:id="@+id/tvPersonDeathDay"
+                    android:layout_width="195dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textSize="18sp"
+                    tools:text="Death Day" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvBiography"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/biography"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/ivPersonDetail"
+                app:layout_constraintTop_toBottomOf="@id/llPersonDetailDate" />
+
+            <TextView
+                android:id="@+id/tvPersonDetailBiography"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@id/llPersonSomeInfo"
+                app:layout_constraintStart_toStartOf="@id/ivPersonDetail"
+                app:layout_constraintTop_toBottomOf="@id/tvBiography"
+                tools:text="@string/description" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/llPersonMediaDetails"
+        android:layout_width="match_parent"
+        android:layout_height="208dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/svPersonMainDetails">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPersonMovies"
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            tools:listitem="@layout/item_person_media" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPersonTVShows"
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            tools:listitem="@layout/item_person_media" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
