@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.persondetailsresponse.PersonDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
@@ -26,6 +27,26 @@ class DetailsViewModel @Inject constructor(
 
     private val _serie: MutableLiveData<Resource<SerieDetailsResponse>> = MutableLiveData()
     val serie: LiveData<Resource<SerieDetailsResponse>> = _serie
+
+    private val _person: MutableLiveData<Resource<PersonDetailsResponse>> = MutableLiveData()
+    val person: LiveData<Resource<PersonDetailsResponse>> = _person
+
+    fun getPersonDetails(personId: Int) = viewModelScope.launch {
+        _person.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.providePersonDetails(personId)
+                _person.postValue(handlePersonDetailsResponse(response))
+            } else {
+                _person.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _person.postValue(Resource.Error("Network Failure"))
+                else -> _person.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
 
     fun getMovieDetails(movieId: Int) = viewModelScope.launch {
         _movie.postValue(Resource.Loading())
@@ -59,6 +80,15 @@ class DetailsViewModel @Inject constructor(
                 else -> _serie.postValue(Resource.Error("Conversion Error"))
             }
         }
+    }
+
+    private fun handlePersonDetailsResponse(response: Response<PersonDetailsResponse>): Resource<PersonDetailsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
     }
 
     private fun handleMovieDetailsResponse(response: Response<MovieDetailsResponse>): Resource<MovieDetailsResponse> {

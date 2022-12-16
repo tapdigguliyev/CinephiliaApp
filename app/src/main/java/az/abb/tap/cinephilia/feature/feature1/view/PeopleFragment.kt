@@ -115,7 +115,7 @@ class PeopleFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                findNavController().navigate(R.id.action_peopleFragment_to_personDetailFragment)
+                findNavController().navigate(R.id.action_peopleFragment_to_personDetailFragment, trendingPerson.idBundle())
             }
         }
 
@@ -158,7 +158,7 @@ class PeopleFragment : Fragment() {
             }
 
             view.root.setOnClickListener {
-                findNavController().navigate(R.id.action_peopleFragment_to_personDetailFragment)
+                findNavController().navigate(R.id.action_peopleFragment_to_personDetailFragment, popularPerson.idBundle())
             }
         }
 
