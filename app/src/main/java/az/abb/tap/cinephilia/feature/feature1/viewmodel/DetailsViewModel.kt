@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import az.abb.tap.cinephilia.data.network.tmdb.model.moviecreditsresponse.MovieCreditsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.persondetailsresponse.PersonDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.SerieDetailsResponse
+import az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse.TVShowCreditsResponse
 import az.abb.tap.cinephilia.data.repository.MediaRepository
 import az.abb.tap.cinephilia.utility.NetworkStatusChecker
 import az.abb.tap.cinephilia.utility.Resource
@@ -30,6 +32,46 @@ class DetailsViewModel @Inject constructor(
 
     private val _person: MutableLiveData<Resource<PersonDetailsResponse>> = MutableLiveData()
     val person: LiveData<Resource<PersonDetailsResponse>> = _person
+
+    private val _movieCredits: MutableLiveData<Resource<MovieCreditsResponse>> = MutableLiveData()
+    val movieCredits: LiveData<Resource<MovieCreditsResponse>> = _movieCredits
+
+    private val _tvShowCredits: MutableLiveData<Resource<TVShowCreditsResponse>> = MutableLiveData()
+    val tvShowCredits: LiveData<Resource<TVShowCreditsResponse>> = _tvShowCredits
+
+    fun getMovieCredits(movieId: Int) = viewModelScope.launch {
+        _movieCredits.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.provideMovieCredits(movieId)
+                _movieCredits.postValue(handleMovieCreditsResponse(response))
+            } else {
+                _movieCredits.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _movieCredits.postValue(Resource.Error("Network Failure"))
+                else -> _movieCredits.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
+
+    fun getTVShowCredits(tvShowId: Int) = viewModelScope.launch {
+        _tvShowCredits.postValue(Resource.Loading())
+        try {
+            if (networkStatusChecker.hasInternetConnection()) {
+                val response = mediaRepository.provideTVShowCredits(tvShowId)
+                _tvShowCredits.postValue(handleTVShowCreditsResponse(response))
+            } else {
+                _tvShowCredits.postValue(Resource.Error("No internet connection"))
+            }
+        } catch (error: Throwable) {
+            when(error) {
+                is IOException -> _tvShowCredits.postValue(Resource.Error("Network Failure"))
+                else -> _tvShowCredits.postValue(Resource.Error("Conversion Error"))
+            }
+        }
+    }
 
     fun getPersonDetails(personId: Int) = viewModelScope.launch {
         _person.postValue(Resource.Loading())
@@ -80,6 +122,24 @@ class DetailsViewModel @Inject constructor(
                 else -> _serie.postValue(Resource.Error("Conversion Error"))
             }
         }
+    }
+
+    private fun handleMovieCreditsResponse(response: Response<MovieCreditsResponse>): Resource<MovieCreditsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
+    }
+
+    private fun handleTVShowCreditsResponse(response: Response<TVShowCreditsResponse>): Resource<TVShowCreditsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let { resultResponse ->
+                return Resource.Success(resultResponse)
+            }
+        }
+        return Resource.Error(response.message())
     }
 
     private fun handlePersonDetailsResponse(response: Response<PersonDetailsResponse>): Resource<PersonDetailsResponse> {

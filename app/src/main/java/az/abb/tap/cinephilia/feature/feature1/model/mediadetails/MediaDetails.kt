@@ -12,4 +12,5 @@ data class MediaDetails(
     val runtime: Int,
     val title: String,
     val vote_average: Double,
+    val language: String
 )

@@ -3,6 +3,7 @@ package az.abb.tap.cinephilia.utility
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils.substring
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
+import az.abb.tap.cinephilia.feature.feature1.model.mediacast.MediaCast
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.model.person.Person
 import com.bumptech.glide.RequestManager
@@ -107,8 +109,13 @@ fun Person.idBundle() =
         putInt("personId", id)
     }
 
+fun MediaCast.idBundle() =
+    Bundle().apply {
+        putInt("personId", id)
+    }
+
 fun Double.outOfTen() =
-    toString() + "/10"
+    substring(this.toString(), 0, 3) + "/10"
 
 fun CombinedLoadStates.setup(context: Context, progressBar: ProgressBar) {
     if (this.refresh is LoadState.Loading ||

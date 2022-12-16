@@ -1,8 +1,7 @@
-package az.abb.tap.cinephilia.data.network.tmdb.model.moviecreditsresponse
+package az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse
 
-data class Cast(
+data class TVShowCastResult(
     val adult: Boolean,
-    val cast_id: Int,
     val character: String,
     val credit_id: String,
     val gender: Int,
@@ -12,5 +11,5 @@ data class Cast(
     val order: Int,
     val original_name: String,
     val popularity: Double,
-    val profile_path: String
+    val profile_path: String?
 )

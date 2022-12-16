@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mediaDetailsBase"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".feature.feature1.view.MediaDetailsFragment">
 
     <ScrollView
-        android:id="@+id/movieDetailsLayout"
+        android:id="@+id/svMovieDetails"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:paddingTop="4dp"
         android:paddingBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/rvMediaCredits"
+        app:layout_constraintBottom_toTopOf="@id/llMediaCredits"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -58,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="@id/guideline2"
+                app:layout_constraintEnd_toStartOf="@id/tvMovieLanguage"
                 app:layout_constraintStart_toStartOf="@id/ivMovie"
                 app:layout_constraintTop_toBottomOf="@id/tvMovieOriginalTitle"
                 tools:text="sci-fi, drama" />
@@ -76,10 +78,12 @@
                 android:id="@+id/tvMovieLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="32dp"
                 android:textSize="15sp"
-                app:layout_constraintStart_toEndOf="@id/tvMovieYear"
-                app:layout_constraintTop_toTopOf="@id/tvMovieYear"
+                app:layout_constraintEnd_toEndOf="@id/guideline2"
+                app:layout_constraintStart_toEndOf="@id/tvMovieGenres"
+                app:layout_constraintTop_toTopOf="@id/tvMovieGenres"
                 tools:text="en" />
 
             <TextView
@@ -126,13 +130,32 @@
 
     </ScrollView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMediaCredits"
+    <LinearLayout
+        android:id="@+id/llMediaCredits"
         android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:layout_marginBottom="4dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/movieDetailsLayout"
-        tools:listitem="@layout/item_media_person"/>
+        app:layout_constraintTop_toBottomOf="@id/svMovieDetails">
+
+        <TextView
+            android:id="@+id/tvCast"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/cast"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMediaCredits"
+            android:layout_width="match_parent"
+            android:layout_height="106dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/svMovieDetails"
+            tools:listitem="@layout/item_media_person" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

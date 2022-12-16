@@ -1,6 +1,7 @@
 package az.abb.tap.cinephilia.utility
 
 import az.abb.tap.cinephilia.data.network.tmdb.model.genres.GenreInfo
+import az.abb.tap.cinephilia.data.network.tmdb.model.moviecreditsresponse.MovieCastResult
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.DetailGenre
 import az.abb.tap.cinephilia.data.network.tmdb.model.moviedetailsresponse.MovieDetailsResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.movieresponse.MoviesResponse
@@ -12,9 +13,11 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.seriedetailsresponse.Series
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.ResultSerie
 import az.abb.tap.cinephilia.data.network.tmdb.model.seriesresponse.SeriesResponse
 import az.abb.tap.cinephilia.data.network.tmdb.model.trendingpeopleresponse.ResultTrendingPeople
+import az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse.TVShowCastResult
 import az.abb.tap.cinephilia.feature.feature1.model.genres.Genre
 import az.abb.tap.cinephilia.feature.feature1.model.media.Media
 import az.abb.tap.cinephilia.feature.feature1.model.media.Medias
+import az.abb.tap.cinephilia.feature.feature1.model.mediacast.MediaCast
 import az.abb.tap.cinephilia.feature.feature1.model.mediadetails.MediaDetails
 import az.abb.tap.cinephilia.feature.feature1.model.person.Person
 import az.abb.tap.cinephilia.feature.feature1.model.persondetails.PersonDetails
@@ -78,7 +81,8 @@ fun MovieDetailsResponse.toMediaDetails() =
         release_date = release_date,
         runtime = runtime,
         title = title,
-        vote_average = vote_average
+        vote_average = vote_average,
+        language = original_language
     )
 
 fun SerieDetailsResponse.toMediaDetails() =
@@ -91,7 +95,8 @@ fun SerieDetailsResponse.toMediaDetails() =
         release_date = first_air_date,
         runtime = 0,
         title = name,
-        vote_average = vote_average
+        vote_average = vote_average,
+        language = original_language
     )
 
 fun DetailGenre.toNewGenre() =
@@ -137,5 +142,21 @@ fun PersonDetailsResponse.toPersonDetails() =
         name = name,
         placeOfBirth = place_of_birth,
         popularity = popularity,
+        profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path)
+    )
+
+fun MovieCastResult.toMediaCast() =
+    MediaCast(
+        name = name,
+        characterName = character,
+        id = id,
+        profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path)
+    )
+
+fun TVShowCastResult.toMediaCast() =
+    MediaCast(
+        name = name,
+        characterName = character,
+        id = id,
         profilePath = if (profile_path == null) null else String.format(IMAGE_BASE_URL, profile_path)
     )

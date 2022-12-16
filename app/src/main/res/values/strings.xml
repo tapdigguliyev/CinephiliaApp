@@ -8,5 +8,6 @@
     <string name="media_person_image">Media Person Image</string>
     <string name="person_image">Person image</string>
     <string name="biography">Biography</string>
-    <string name="character">Character</string>
+    <string name="character">As</string>
+    <string name="cast">Cast</string>
 </resources>
