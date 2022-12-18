@@ -95,7 +95,7 @@ class PersonDetailsFragment : Fragment() {
                     binding.pbPersonDetails.makeInvisible()
 
                     responseResource.data?.let { personMovieCreditsResponse ->
-                        val personMovies = personMovieCreditsResponse.cast.map { it.toPersonMediaCast() }
+                        val personMovies = personMovieCreditsResponse.cast.map { it.toPersonMediaCast() }.sortedByDescending { it.voteAverage }
 
                         if (personMovies.isNotEmpty()) personMoviesAdapter.differ.submitList(personMovies)
                         else binding.llPersonMovieDetails.makeGone()
@@ -125,7 +125,7 @@ class PersonDetailsFragment : Fragment() {
                     binding.pbPersonDetails.makeInvisible()
 
                     responseResource.data?.let { personTVShowCreditsResponse ->
-                        val personTVShows = personTVShowCreditsResponse.cast.map { it.toPersonMediaCast() }
+                        val personTVShows = personTVShowCreditsResponse.cast.map { it.toPersonMediaCast() }.sortedByDescending { it.voteAverage }
 
                         if (personTVShows.isNotEmpty()) personTVShowsAdapter.differ.submitList(personTVShows)
                         else binding.llPersonTVShowDetails.makeGone()

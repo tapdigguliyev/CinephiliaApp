@@ -126,7 +126,8 @@ fun PersonMediaCast.idBundle(mediaType: String) =
     }
 
 fun Double.outOfTen() =
-    substring(this.toString(), 0, 3) + "/10"
+    if (this == 10.0) substring(this.toString(), 0, 4) + "/10"
+    else substring(this.toString(), 0, 3) + "/10"
 
 fun CombinedLoadStates.setup(context: Context, progressBar: ProgressBar) {
     if (this.refresh is LoadState.Loading ||
