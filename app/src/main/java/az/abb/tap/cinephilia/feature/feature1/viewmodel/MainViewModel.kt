@@ -28,12 +28,6 @@ class MainViewModel @Inject constructor(
     private val networkStatusChecker: NetworkStatusChecker
     ) : ViewModel() {
 
-    private val _topRatedMovies: MutableLiveData<Resource<MoviesResponse>> = MutableLiveData()
-    val topRatedMovies: LiveData<Resource<MoviesResponse>> = _topRatedMovies
-
-    private val _topRatedTVShows: MutableLiveData<Resource<SeriesResponse>> = MutableLiveData()
-    val topRatedTVShows: LiveData<Resource<SeriesResponse>> = _topRatedTVShows
-
     private val _movieGenres: MutableLiveData<Resource<GenresResponse>> = MutableLiveData()
     val movieGenres: LiveData<Resource<GenresResponse>> = _movieGenres
 
@@ -56,38 +50,12 @@ class MainViewModel @Inject constructor(
         return mediaRepository.providePopularTVShows().cachedIn(viewModelScope)
     }
 
-    fun getTopRatedMovies() = viewModelScope.launch {
-        _topRatedMovies.postValue(Resource.Loading())
-        try {
-            if (networkStatusChecker.hasInternetConnection()) {
-                val response = mediaRepository.provideTopRatedMovies()
-                _topRatedMovies.postValue(handleResponse(response))
-            } else {
-                _topRatedMovies.postValue(Resource.Error("No internet connection"))
-            }
-        } catch (error: Throwable) {
-            when(error) {
-                is IOException -> _topRatedMovies.postValue(Resource.Error("Network Failure"))
-                else -> _topRatedMovies.postValue(Resource.Error("Conversion Error"))
-            }
-        }
+    suspend fun getTopRatedMovies(): LiveData<PagingData<ResultMovie>> {
+        return mediaRepository.provideTopRatedMovies().cachedIn(viewModelScope)
     }
 
-    fun getTopRatedTVShows() = viewModelScope.launch {
-        _topRatedTVShows.postValue(Resource.Loading())
-        try {
-            if (networkStatusChecker.hasInternetConnection()) {
-                val response = mediaRepository.provideTopRatedTVShows()
-                _topRatedTVShows.postValue(handleResponse(response))
-            } else {
-                _topRatedTVShows.postValue(Resource.Error("No internet connection"))
-            }
-        } catch (error: Throwable) {
-            when(error) {
-                is IOException -> _topRatedTVShows.postValue(Resource.Error("Network Failure"))
-                else -> _topRatedTVShows.postValue(Resource.Error("Conversion Error"))
-            }
-        }
+    suspend fun getTopRatedTVShows(): LiveData<PagingData<ResultSerie>> {
+        return mediaRepository.provideTopRatedTVShows().cachedIn(viewModelScope)
     }
 
     fun getMovieGenres() = viewModelScope.launch {

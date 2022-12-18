@@ -31,7 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SeriesFragment : Fragment() {
     private lateinit var binding: FragmentSeriesBinding
-    private val topRatedSeriesAdapter by lazy { BaseAdapter<Media>() }
+    private val topRatedSeriesAdapter by lazy { BasePagingAdapter<Media>() }
     private val popularSeriesAdapter by lazy { BasePagingAdapter<Media>() }
     private val viewModel: MainViewModel by viewModels()
     private val genres: MutableList<Genre> = mutableListOf()
@@ -71,7 +71,6 @@ class SeriesFragment : Fragment() {
                     val genreList = responseResource.data?.genres?.map { it.toGenre() }
                     if (genreList != null) genres.addAll(genreList)
 
-                    viewModel.getTopRatedTVShows()
                     observeTopRatedTVShows()
                     observePopularTVShows()
                 }
@@ -94,24 +93,13 @@ class SeriesFragment : Fragment() {
     }
 
     private fun observeTopRatedTVShows() {
-        viewModel.topRatedTVShows.observe(viewLifecycleOwner) { responseResource ->
-            when (responseResource) {
-                is Resource.Success -> {
-                    binding.pbTopRatedTVShows.makeInvisible()
-                    responseResource.data?.let { response ->
-                        topRatedSeriesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+        lifecycleScope.launch {
+            viewModel.getTopRatedTVShows().observe(viewLifecycleOwner) {
+                it?.let {
+                    val mediaPagingData = it.map { resultSeries ->
+                        resultSeries.toMedia()
                     }
-                }
-
-                is Resource.Error -> {
-                    binding.pbTopRatedTVShows.makeInvisible()
-                    responseResource.message?.let { message ->
-                        Log.e(TAG, "An error occurred: $message")
-                    }
-                }
-
-                is Resource.Loading -> {
-                    binding.pbTopRatedTVShows.makeVisible()
+                    topRatedSeriesAdapter.submitData(lifecycle, mediaPagingData)
                 }
             }
         }
@@ -163,6 +151,10 @@ class SeriesFragment : Fragment() {
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_seriesFragment_to_movieDetailsFragment, topRatedTVShow.idBundle("SERIES"))
             }
+        }
+
+        topRatedSeriesAdapter.addLoadStateListener { loadState ->
+            loadState.setup(requireContext(), binding.pbTopRatedTVShows)
         }
     }
 

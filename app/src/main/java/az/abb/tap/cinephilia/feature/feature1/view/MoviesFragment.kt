@@ -31,7 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
-    private val topRatedMoviesAdapter by lazy { BaseAdapter<Media>() }
+    private val topRatedMoviesAdapter by lazy { BasePagingAdapter<Media>() }
     private val popularMoviesAdapter by lazy { BasePagingAdapter<Media>() }
     private val viewModel: MainViewModel by viewModels()
     private val genres: MutableList<Genre> = mutableListOf()
@@ -70,7 +70,6 @@ class MoviesFragment : Fragment() {
                     val genreList = responseResource.data?.genres?.map { it.toGenre() }
                     if (genreList != null) genres.addAll(genreList)
 
-                    viewModel.getTopRatedMovies()
                     observeTopRatedMovies()
                     observePopularMovies()
                 }
@@ -93,24 +92,13 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observeTopRatedMovies() {
-        viewModel.topRatedMovies.observe(viewLifecycleOwner) { responseResource ->
-            when (responseResource) {
-                is Resource.Success -> {
-                    binding.pbTopRatedMovies.makeInvisible()
-                    responseResource.data?.let { response ->
-                        topRatedMoviesAdapter.differ.submitList(response.toMedias().movies.toMutableList())
+        lifecycleScope.launch {
+            viewModel.getTopRatedMovies().observe(viewLifecycleOwner) {
+                it?.let {
+                    val mediaPagingData = it.map { result ->
+                        result.toMedia()
                     }
-                }
-
-                is Resource.Error -> {
-                    binding.pbTopRatedMovies.makeInvisible()
-                    responseResource.message?.let { message ->
-                        Log.e(TAG, "An error occurred: $message")
-                    }
-                }
-
-                is Resource.Loading -> {
-                    binding.pbTopRatedMovies.makeVisible()
+                    topRatedMoviesAdapter.submitData(lifecycle, mediaPagingData)
                 }
             }
         }
@@ -162,6 +150,10 @@ class MoviesFragment : Fragment() {
             view.root.setOnClickListener {
                 findNavController().navigate(R.id.action_moviesFragment_to_movieDetailsFragment, topRatedMovie.idBundle("MOVIES"))
             }
+        }
+
+        topRatedMoviesAdapter.addLoadStateListener { loadState ->
+            loadState.setup(requireContext(), binding.pbTopRatedMovies)
         }
     }
 

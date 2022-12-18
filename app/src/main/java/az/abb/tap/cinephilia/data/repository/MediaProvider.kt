@@ -19,10 +19,10 @@ import az.abb.tap.cinephilia.data.network.tmdb.model.tvshowcreditsresponse.TVSho
 import retrofit2.Response
 
 interface MediaProvider {
-    suspend fun provideTopRatedMovies(): Response<MoviesResponse>
+    suspend fun provideTopRatedMovies(): LiveData<PagingData<ResultMovie>>
     suspend fun providePopularMovies(): LiveData<PagingData<ResultMovie>>
     suspend fun provideMovieGenres(): Response<GenresResponse>
-    suspend fun provideTopRatedTVShows(): Response<SeriesResponse>
+    suspend fun provideTopRatedTVShows(): LiveData<PagingData<ResultSerie>>
     suspend fun providePopularTVShows(): LiveData<PagingData<ResultSerie>>
     suspend fun provideMovieDetails(movieId: Int): Response<MovieDetailsResponse>
     suspend fun provideSerieDetails(tvId: Int): Response<SerieDetailsResponse>

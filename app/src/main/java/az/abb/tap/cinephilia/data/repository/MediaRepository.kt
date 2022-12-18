@@ -17,9 +17,9 @@ import retrofit2.Response
 
 class MediaRepository(private val apiService: ApiService) : MediaProvider {
 
-    override suspend fun provideTopRatedMovies(): Response<MoviesResponse> {
-        return apiService.getTopRatedMovies()
-    }
+    override suspend fun provideTopRatedMovies() = createPager { page ->
+        apiService.getTopRatedMovies(page = page).body()?.results!!
+    }.liveData
 
     override suspend fun providePopularMovies() = createPager { page ->
         apiService.getPopularMovies(page = page).body()?.results!!
@@ -29,9 +29,9 @@ class MediaRepository(private val apiService: ApiService) : MediaProvider {
         return apiService.getMovieGenres()
     }
 
-    override suspend fun provideTopRatedTVShows(): Response<SeriesResponse> {
-        return apiService.getTopRatedTvShows()
-    }
+    override suspend fun provideTopRatedTVShows() = createPager { page ->
+        apiService.getTopRatedTvShows(page = page).body()?.results!!
+    }.liveData
 
     override suspend fun providePopularTVShows() = createPager { page ->
         apiService.getPopularTvShows(page = page).body()?.results!!
